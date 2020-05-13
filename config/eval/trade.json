@@ -1,9 +1,0 @@
-{
-    "lists":[
-        {
-            "name":"ResNet18",
-            "path":"data_remote/models/CIFAR/ResNet18_trade.pth",
-            "dataset":"CIFAR"
-        }
-    ]
-}
