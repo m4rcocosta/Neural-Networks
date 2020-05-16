@@ -35,8 +35,8 @@ transform_test = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((norm_mean,norm_mean,norm_mean), (norm_var, norm_var, norm_var)),
 ])
-cifar_train = datasets.CIFAR10("./data", train=True, download=True, transform=transform_train)
-cifar_test = datasets.CIFAR10("./data", train=False, download=True, transform=transform_test)
+cifar_train = datasets.MNIST("./data", train=True, download=True, transform=transform_train)
+cifar_test = datasets.MNIST("./data", train=False, download=True, transform=transform_test)
 train_loader = DataLoader(cifar_train, batch_size = 128, shuffle=True)
 test_loader = DataLoader(cifar_test, batch_size = 100, shuffle=True)
 
