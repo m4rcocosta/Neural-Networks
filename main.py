@@ -13,7 +13,7 @@ import torchvision.transforms as T
 import matplotlib
 import matplotlib.pyplot as plt
 
-import foolbox
+from tqdm import tqdm
 
 from PIL import Image
 
@@ -23,6 +23,8 @@ from time import time
 # Change pretrained model download directory, so it doesn't
 # download every time the runtime restarts
 os.environ['TORCH_HOME'] = './models/pretrained'
+
+
 
 # We have four types of models stored here:
 # - pretrained: Default models from pytorch, trained on ImageNet
@@ -74,27 +76,6 @@ MEAN = 0
 VAR = 1
 INPUT_SIZE = 224
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-transform_train = T.Compose(
-    [T.RandomCrop(32, padding=4),
-     T.RandomHorizontalFlip(),
-     T.Resize(INPUT_SIZE),
-     T.ToTensor(),
-     T.Normalize((MEAN,MEAN,MEAN), (VAR,VAR,VAR))])
-transform_test = T.Compose(
-    [T.Resize(INPUT_SIZE),
-     T.ToTensor(),
-     T.Normalize((MEAN,MEAN,MEAN), (VAR,VAR,VAR))])
-
-trainset = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
-trainloader = DataLoader(trainset, batch_size=64, shuffle=True, num_workers=2)
-
-testset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
-testloader = DataLoader(testset, batch_size=64, shuffle=False, num_workers=2)
-
-classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
-
 class kWTA(nn.Module):
     def __init__(self, sr):
         super(kWTA, self).__init__()
@@ -118,79 +99,83 @@ def activation_to_kwta(model, old_activation, sr=0.2):
         else:
             activation_to_kwta(child, old_activation, sr)
 
+def performEpoch(loader, model, opt=None, device=None, use_tqdm=False):
+    totalAccuracy, totalError, totalLoss = 0., 0., 0.
+    if opt is None:
+        model.eval()
+    else:
+        model.train()
+
+    if use_tqdm:
+        pbar = tqdm(total=len(loader))
+
+    for X, Y in loader:
+        X, Y = X.to(device), Y.to(device)
+
+
+        yp = model(X)
+        loss = nn.CrossEntropyLoss()(yp, Y)
+        if opt:
+            opt.zero_grad()
+            loss.backward()
+            opt.step()
+
+        max_vals, max_indices = torch.max(model(X),1)
+        totalAccuracy = (max_indices == Y).sum().item() / max_indices.size()[0]
+        totalError += (yp.max(dim=1)[1] != Y).sum().item()
+        totalLoss += loss.item() * X.shape[0]
+
+        if use_tqdm:
+            pbar.update(1)
+
+    return totalAccuracy, totalError / len(loader.dataset), totalLoss / len(loader.dataset)
+
 # Trains the model in-place, and saves after every epoch to save_path.
 # Only trains 1 epoch by default
-def train(model, save_path, lr=0.01, epochs=1):
-    model = model.to(device) # use CUDA
-    model.train()
+def train(model, save_path, lr=0.1, epochs=1, batchSize=64):
+    transform_train = T.Compose(
+        [T.RandomCrop(32, padding=4),
+         T.RandomHorizontalFlip(),
+         T.Resize(INPUT_SIZE),
+         T.ToTensor(),
+         T.Normalize((MEAN,MEAN,MEAN), (VAR,VAR,VAR))])
+    transform_test = T.Compose(
+        [T.Resize(INPUT_SIZE),
+         T.ToTensor(),
+         T.Normalize((MEAN,MEAN,MEAN), (VAR,VAR,VAR))])
 
-    criterion = nn.CrossEntropyLoss()
+    trainset = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
+    testset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform_test)
+
+    trainloader = DataLoader(trainset, batch_size=batchSize, shuffle=True)
+    testloader = DataLoader(testset, batch_size=batchSize, shuffle=False)
+
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    model = model.to(device)
+
     optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9)
 
     for epoch in range(epochs):
-        running_loss = 0
-        for i, data in enumerate(trainloader, 0):
-            inputs, labels = data[0].to(device), data[1].to(device)
-
-            # zero the parameter gradients
-            optimizer.zero_grad()
-
-            # forward
-            outputs = model(inputs)
-            # backward
-            loss = criterion(outputs, labels)
-            loss.backward()
-            # had to add clipping to fix exploding gradients:
-            nn.utils.clip_grad_norm_(model.parameters(), 0.5)
-            optimizer.step()
-
-            # print statistics
-            running_loss += loss.item() / 200
-            if i % 200 == 199:    # print every 200 mini-batches
-                print('[%d, %5d] loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss))
-                running_loss = 0.0
+        train_acc, train_err, train_loss = performEpoch(trainloader, model, optimizer, device=device, use_tqdm=True)
+        print('epoch', epoch, "train acc", train_acc, 'train err', train_err, 'train loss', train_loss)
 
         # save checkpoint after every epoch
         torch.save(model.state_dict(), save_path)
 
     print('Finished Training')
 
-# Test the model
-def test(net):
-    net = net.to(device)
-    net.eval()
-
-    correct = 0
-    total = 0
-    with torch.no_grad():
-        for data in testloader:
-            images, labels = data[0].to(device), data[1].to(device)
-            outputs = net(images)
-            _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
-
-    print('Accuracy of the network on the 10000 test images: %.1f %%' % (
-        100 * correct / total))
-
-def imshow(img):
-    img = img / 2 + 0.5     # unnormalize
-    npimg = img.numpy()
-    plt.imshow(np.transpose(npimg, (1, 2, 0)))
-    plt.show()
-
 start = time()
 
-train(torchvision.models.resnet18(pretrained=True), lr=0.001, epochs=1, save_path='./models/relu/ResNet18_bench.pth')
+train(torchvision.models.resnet18(pretrained=False), lr=0.01, epochs=1, save_path='./models/relu/ResNet18.pth', batchSize=32)
 
 end = time()
 print("Time Elapsed=%d" % (end - start))
 
 # Track time for benchmarking
-start = time()
+#start = time()
 
-test(models['relu']['resnet'])
+#test(models['relu']['resnet'])
 
-end = time()
-print("Time Elapsed=%d" % (end - start))
+#end = time()
+#print("Time Elapsed=%d" % (end - start))
