@@ -44,52 +44,6 @@ def activation_to_kwta(model, old_activation, sr=0.2):
         else:
             activation_to_kwta(child, old_activation, sr)
 
-models = {"pretrained": {}, "relu": {}, "kwta-0.1": {}, "kwta-0.2": {}}
-
-# Download and load pretrained models (trained for ImageNet dataset)
-models["pretrained"]["resnet"] = torchvision.models.resnet18(pretrained=True)
-models["pretrained"]["alexnet"] = torchvision.models.alexnet(pretrained=True)
-#models["pretrained"]["densenet"] = torchvision.models.densenet121(pretrained=True)
-#models["pretrained"]["wide_resnet"] = torchvision.models.wide_resnet50_2(pretrained=True)
-#models["pretrained"]["vgg"] = torchvision.models.vgg11(pretrained=True)
-#models["pretrained"]["squeezenet"] = torchvision.models.squeezenet1_1(pretrained=True)
-
-## ResNet ReLU (Fine-tuned models for CIFAR10)
-models["relu"]["resnet"] = copy.deepcopy(models["pretrained"]["resnet"])
-models["relu"]["resnet"].fc.out_features = 10
-if os.path.isfile("./models/relu/ResNet18.pth"):
-    models["relu"]["resnet"].load_state_dict(torch.load("./models/relu/ResNet18.pth"))
-
-## ResNet kWTA 0.1 (Models using kwta activation with sparsity=0.1 for CIFAR10)
-models["kwta-0.1"]["resnet"] = copy.deepcopy(models["relu"]["resnet"])
-activation_to_kwta(models["kwta-0.1"]["resnet"], kWTA, sr=0.1)
-if os.path.isfile("./models/kwta-0.1/ResNet18.pth"):
-    models["kwta-0.1"]["resnet"].load_state_dict(torch.load("./models/kwta-0.1/ResNet18.pth"))
-
-## ResNet kWTA 0.2 (Models using kwta activation with sparsity=0.2 for CIFAR10)
-models["kwta-0.2"]["resnet"] = copy.deepcopy(models["kwta-0.1"]["resnet"])
-activation_to_kwta(models["kwta-0.2"]["resnet"], nn.ReLU, sr=0.2)
-if os.path.isfile("./models/kwta-0.2/ResNet18.pth"):
-    models["kwta-0.2"]["resnet"].load_state_dict(torch.load("./models/kwta-0.2/ResNet18.pth"))
-
-## AlexNet ReLU (Fine-tuned models for CIFAR10)
-models["relu"]["alexnet"] = copy.deepcopy(models["pretrained"]["alexnet"])
-models["relu"]["alexnet"].classifier[-1].out_features = 10
-if os.path.isfile("./models/relu/AlexNet.pth"):
-    models["relu"]["alexnet"].load_state_dict(torch.load("./models/relu/AlexNet.pth"))
-
-## AlexNet kWTA 0.1 (Models using kwta activation with sparsity=0.1 for CIFAR10)
-models["kwta-0.1"]["alexnet"] = copy.deepcopy(models["relu"]["alexnet"])
-activation_to_kwta(models["kwta-0.1"]["alexnet"], kWTA, sr=0.1)
-if os.path.isfile("./models/kwta-0.1/AlexNet.pth"):
-    models["kwta-0.1"]["alexnet"].load_state_dict(torch.load("./models/kwta-0.1/AlexNet.pth"))
-
-## AlexNet kWTA 0.2 (Models using kwta activation with sparsity=0.2 for CIFAR10)
-models["kwta-0.2"]["alexnet"] = copy.deepcopy(models["kwta-0.1"]["alexnet"])
-activation_to_kwta(models["kwta-0.2"]["alexnet"], nn.ReLU, sr=0.2)
-if os.path.isfile("./models/kwta-0.2/AlexNet.pth"):
-    models["kwta-0.2"]["alexnet"].load_state_dict(torch.load("./models/kwta-0.2/AlexNet.pth"))
-
 MEAN = 0
 VAR = 1
 INPUT_SIZE = 224
@@ -114,6 +68,29 @@ def loadDataset(datasetName, batchSize):
     trainLoader = DataLoader(trainSet, batch_size=batchSize, shuffle=True)
     testLoader = DataLoader(testSet, batch_size=batchSize, shuffle=True)
     return trainLoader, testLoader
+
+def loadModel(modelName, usekWTA=False, kWTAsr=0.2, path="", pretrained=False):
+    if modelName == "resnet18":
+        if pretrained:
+            model = torchvision.models.resnet18(pretrained=True).fc.out_features = 10
+        else:
+            model = torchvision.models.resnet18(pretrained=False)
+    elif modelName == "alexnet":
+        if pretrained:
+            model = torchvision.models.alexnet(pretrained=True).classifier[-1].out_features = 10
+        else:
+            model = torchvision.models.alexnet(pretrained=False)
+    else:
+        raise NotImplementedError
+
+    if usekWTA:
+        activation_to_kwta(model, kWTA, sr=kWTAsr)
+
+    if os.path.isfile(path):
+        model.load_state_dict(torch.load(path))
+
+    return model
+
 
 def performEpoch(loader, model, opt=None, device=None, use_tqdm=True):
     totalAccuracy, totalError, totalLoss = 0., 0., 0.
@@ -173,4 +150,5 @@ def train(model, save_path, datasetName, lr=0.1, epochs=1, batchSize=64):
     print("Finished Training. Time Elapsed=%d" % (end - start))
 
 if __name__ == "__main__":
-    train(models["relu"]["resnet"], datasetName="cifar10", lr=0.01, epochs=2, save_path="./models/relu/ResNet18.pth", batchSize=32)
+    model = loadModel("resnet18")
+    train(model, datasetName="cifar10", lr=0.01, epochs=2, save_path="./models/relu/ResNet18.pth", batchSize=32)
