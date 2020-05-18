@@ -21,10 +21,11 @@ from time import time
 
 # Change pretrained model download directory, so it doesn't download every time the runtime restarts
 os.environ["TORCH_HOME"] = "./Models/Pretrained"
-dataPath = "./Data"
-modelsPath = "./Models"
+dataPath = "./Data/"
+modelsPath = "./Models/"
 resultsPath = "./Results/"
 
+tasks = ["train"]
 myModels = ["ResNet18", "AlexNet"]
 myDatasets = ["CIFAR-10", "SVHN"]
 myActivationFunctions = ["ReLU", "k-WTA"]
@@ -214,6 +215,7 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="k-WTA")
+    parser.add_argument("--task", type = str, help = "Task: " + ", ".join(tasks), required = True)
     parser.add_argument("--model", type = str, help = "Model: " + ", ".join(myModels), required = True)
     parser.add_argument("--dataset", type = str, help = "Dataset: " + ", ".join(myDatasets), required = True)
     parser.add_argument("--activation", type = str, help = "Activation function: " + ", ".join(myActivationFunctions), required = True)
@@ -229,6 +231,9 @@ if __name__ == "__main__":
     parser.add_argument("--var", type = int, help = "Var", required = False, default=1)
     parser.add_argument("--inputSize", type = int, help = "Input size", required = False, default=224)
     args = parser.parse_args()
+    if args.task not in tasks:
+        print("Invalid task %s" % args.task)
+        exit(1)
     if args.model not in myModels:
         print("Invalid model %s" % args.model)
         exit(1)
@@ -240,6 +245,7 @@ if __name__ == "__main__":
         exit(1)
 
     #Parameters
+    task = args.task
     modelName = args.model
     datasetName = args.dataset
     activationFunction = args.activation
@@ -257,16 +263,17 @@ if __name__ == "__main__":
 
     savePath = ""
     if saveModel:
-        savePath = modelsPath + "/" + modelName + "_" + datasetName + "_" + activationFunction
+        savePath = modelsPath +  modelName + "_" + datasetName + "_" + activationFunction
         if activationFunction == "k-WTA":
             savePath += "_" + str(kWTAsr)
         savePath += ".pth"
 
     loadPath = ""
     if restoreModel:
-        loadPath = modelsPath + "/" + modelName + "_" + datasetName + "_" + activationFunction
+        loadPath = modelsPath +  modelName + "_" + datasetName + "_" + activationFunction
         if activationFunction == "k-WTA":
             loadPath += "_" + str(kWTAsr)
         loadPath += ".pth"
 
-    train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr, lr, savePath, loadPath, pretrainedModel, getPlot, mean, var, inputSize)
+    if task == "train":
+        train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr, lr, savePath, loadPath, pretrainedModel, getPlot, mean, var, inputSize)
