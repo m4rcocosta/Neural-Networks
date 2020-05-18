@@ -18,4 +18,5 @@ Project for Neural Network course
 - foolbox
 
 ## Usage
-Ex: > python main.py --task train --model ResNet18 --dataset CIFAR-10 --activation ReLU --batchSize 32
+Ex:
+> python main.py --task train --model ResNet18 --dataset CIFAR-10 --activation ReLU --batchSize 32
