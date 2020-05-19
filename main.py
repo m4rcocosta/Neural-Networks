@@ -25,7 +25,7 @@ dataPath = "./Data/"
 modelsPath = "./Models/"
 resultsPath = "./Results/"
 
-tasks = ["train"]
+tasks = ["train", "attack"]
 myModels = ["ResNet18", "AlexNet"]
 myDatasets = ["CIFAR-10", "SVHN"]
 myActivationFunctions = ["ReLU", "k-WTA"]
@@ -83,19 +83,19 @@ def loadDataset(datasetName, batchSize, mean, var, inputSize):
 def loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel):
     if modelName == "ResNet18":
         if pretrainedModel:
-            model = torchvision.models.resnet18(pretrained=True).fc.out_features = 10
+            model = torchvision.models.resnet18(pretrained=True)
+            model.fc.out_features = 10
         else:
             model = torchvision.models.resnet18(pretrained=False)
     elif modelName == "AlexNet":
         if pretrainedModel:
-            model = torchvision.models.alexnet(pretrained=True).classifier[-1].out_features = 10
+            model = torchvision.models.alexnet(pretrained=True)
+            model.classifier[-1].out_features = 10
         else:
             model = torchvision.models.alexnet(pretrained=False)
     else:
         print("Model not present")
         raise NotImplementedError
-
-    model.info = {"name": modelName, "activationFunction": activationFunction, "kWTAsr": kWTAsr}
 
     if activationFunction == "k-WTA":
         setActivationkWTA(model, kWTA, sr=kWTAsr)
@@ -107,7 +107,7 @@ def loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel):
 
 
 def performEpoch(loader, model, opt=None, device=None, use_tqdm=True):
-    totalAccuracy, totalError, totalLoss = 0., 0., 0.
+    totalCorrect, totalError, totalLoss = 0., 0., 0.
     if opt is None: #Test
         model.eval()
     else: #Train
@@ -127,18 +127,17 @@ def performEpoch(loader, model, opt=None, device=None, use_tqdm=True):
             loss.backward()
             opt.step()
 
-        max_vals, max_indices = torch.max(model(X),1)
-        totalAccuracy = (max_indices == Y).sum().item() / max_indices.size()[0]
+        totalCorrect += (yp.max(dim=1)[1] == Y).sum().item()
         totalError += (yp.max(dim=1)[1] != Y).sum().item()
         totalLoss += loss.item() * X.shape[0]
 
         if use_tqdm:
             pbar.update(1)
 
-    return totalAccuracy, totalError / len(loader.dataset), totalLoss / len(loader.dataset)
+    return totalCorrect / len(loader.dataset), totalError / len(loader.dataset), totalLoss / len(loader.dataset)
 
 # Trains the model in-place, and saves after every epoch to savePath.
-def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr, lr, savePath, loadPath, pretrainedModel, getPlot, mean, var, inputSize):
+def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr, lr, savePath, loadPath, pretrainedModel, getPlot, getResultTxt, mean, var, inputSize):
 
     trainloader, testloader = loadDataset(datasetName, batchSize, mean, var, inputSize)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -148,6 +147,17 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
     model.to(device)
 
     optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9)
+
+    resultModelPath = resultsPath + modelName + "_" + datasetName + "_" + activationFunction
+    if activationFunction == "k-WTA":
+        resultModelPath += "_" + str(kWTAsr)
+    if pretrainedModel:
+        resultModelPath += "_Pretrained"
+    resultFilePath = resultModelPath + ".txt"
+    plotPath = resultModelPath + ".png"
+
+    if getResultTxt:
+        resultFile = open(resultFilePath, "w")
 
     start = time()
 
@@ -159,10 +169,14 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
     errorValuesTest = []
     for epoch in range(epochs):
         train_acc, train_err, train_loss = performEpoch(trainloader, model, optimizer, device=device, use_tqdm=True)
-        print("\n[TRAIN] Epoch:", epoch + 1, ", Accuracy:", train_acc, ", Error:", train_err, ", Loss:", train_loss)
+        print("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy :" + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss))
 
         test_acc, test_err, test_loss = performEpoch(testloader, model, device=device, use_tqdm=True)
-        print("[TEST] Epoch:", epoch + 1, ", Accuracy:", test_acc, ", Error:", test_err, ", Loss:", test_loss + "\n")
+        print("[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss))
+
+        if getResultTxt:
+            print("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy :" + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss), file = resultFile)
+            print("[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss), file = resultFile)
 
         # save checkpoint after every epoch
         if savePath != "":
@@ -178,7 +192,10 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
         print(accValuesTrain)
 
     end = time()
-    print("Finished Training. Time Elapsed=%d" % (end - start))
+    print("Finished Training. Time Elapsed=%ds" % (end - start))
+    if getResultTxt:
+        print("Time Elapsed=%ds" % (end - start), file = resultFile)
+        resultFile.close()
 
     if getPlot:
         #Plot
@@ -187,9 +204,12 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
         ax1 = plt.subplot(gs[0, 0])
         ax2 = plt.subplot(gs[0, 1])
         ax3 = plt.subplot(gs[0, 2])
-        plotTitle = "Model: " + model.info["name"] + ", Dataset: " + datasetName + ", Activation Function: " + model.info["activationFunction"]
-        if model.info["activationFunction"] == "k-WTA":
-            title += " with Sparcity Ratio " + str(model.info["kWTAsr"])
+        plotTitle = "Model: " + modelName
+        if pretrainedModel:
+            plotTitle += " Pretrained"
+        plotTitle += ", Dataset: " + datasetName + ", Activation Function: " + activationFunction
+        if activationFunction == "k-WTA":
+            plotTitle += " with Sparcity Ratio " + str(kWTAsr)
         fig.suptitle(plotTitle)
         ax1.set_title("Accuracy")
         ax2.set_title("Loss")
@@ -206,10 +226,6 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
         ax3.plot(errorValuesTest, label="Test")
         ax3.legend(loc = "upper left")
 
-        plotPath = resultsPath + modelName + "_" + datasetName + "_" + model.info["activationFunction"]
-        if model.info["activationFunction"] == "k-WTA":
-            plotPath += "_" + str(model.info["kWTAsr"])
-        plotPath += ".png"
         plt.savefig(plotPath)
 
 
@@ -227,6 +243,7 @@ if __name__ == "__main__":
     parser.add_argument("--loadModel", type = bool, help = "Load model", required = False, default=False)
     parser.add_argument("--pretrainedModel", type = bool, help = "Use pretrained model", required = False, default=False)
     parser.add_argument("--getPlot", type = bool, help = "Plot the graph", required = False, default=True)
+    parser.add_argument("--log", type = bool, help = "Log file", required = False, default=True)
     parser.add_argument("--mean", type = int, help = "Mean", required = False, default=0)
     parser.add_argument("--var", type = int, help = "Var", required = False, default=1)
     parser.add_argument("--inputSize", type = int, help = "Input size", required = False, default=224)
@@ -257,6 +274,7 @@ if __name__ == "__main__":
     restoreModel = args.loadModel
     pretrainedModel = args.pretrainedModel
     getPlot = args.getPlot
+    getResultTxt = args.log
     mean = args.mean
     var = args.var
     inputSize = args.inputSize
@@ -266,6 +284,8 @@ if __name__ == "__main__":
         savePath = modelsPath +  modelName + "_" + datasetName + "_" + activationFunction
         if activationFunction == "k-WTA":
             savePath += "_" + str(kWTAsr)
+        if pretrainedModel:
+            savePath += "_Pretrained"
         savePath += ".pth"
 
     loadPath = ""
@@ -273,7 +293,11 @@ if __name__ == "__main__":
         loadPath = modelsPath +  modelName + "_" + datasetName + "_" + activationFunction
         if activationFunction == "k-WTA":
             loadPath += "_" + str(kWTAsr)
+        if pretrainedModel:
+            loadPath += "_Pretrained"
         loadPath += ".pth"
 
     if task == "train":
-        train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr, lr, savePath, loadPath, pretrainedModel, getPlot, mean, var, inputSize)
+        train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr, lr, savePath, loadPath, pretrainedModel, getPlot, getResultTxt, mean, var, inputSize)
+    elif task == "attack":
+        print("Attack")
