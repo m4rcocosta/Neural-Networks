@@ -15,6 +15,7 @@ Project for Neural Network course
 - numpy
 - matplotlib
 - tqdm
+- requests
 - foolbox
 
 ## Usage

@@ -16,8 +16,11 @@ from matplotlib import pyplot as plt
 from matplotlib import gridspec as gridspec
 from tqdm import tqdm
 
+import foolbox
+
 import copy
 from time import time
+import datetime
 
 # Change pretrained model download directory, so it doesn't download every time the runtime restarts
 os.environ["TORCH_HOME"] = "./Models/Pretrained"
@@ -25,10 +28,11 @@ dataPath = "./Data/"
 modelsPath = "./Models/"
 resultsPath = "./Results/"
 
-tasks = ["train", "attack"]
+tasks = ["train", "test", "attack"]
 myModels = ["ResNet18", "AlexNet"]
 myDatasets = ["CIFAR-10", "SVHN"]
 myActivationFunctions = ["ReLU", "k-WTA"]
+myAttacks = ["PGD", "Deepfool"]
 
 class kWTA(nn.Module):
     def __init__(self, sr):
@@ -72,9 +76,6 @@ def loadDataset(datasetName, batchSize, mean, var, inputSize):
     elif datasetName == "SVHN":
         trainSet = datasets.SVHN(root=dataPath, split="train", download=True, transform=transformTrain)
         testSet = datasets.SVHN(root=dataPath, split="test", download=True, transform=transformTest)
-    else:
-        print("Dataset not present!")
-        raise NotImplementedError
 
     trainLoader = DataLoader(trainSet, batch_size=batchSize, shuffle=True)
     testLoader = DataLoader(testSet, batch_size=batchSize, shuffle=True)
@@ -93,9 +94,6 @@ def loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel):
             model.classifier[-1].out_features = 10
         else:
             model = torchvision.models.alexnet(pretrained=False)
-    else:
-        print("Model not present")
-        raise NotImplementedError
 
     if activationFunction == "k-WTA":
         setActivationkWTA(model, kWTA, sr=kWTAsr)
@@ -105,9 +103,10 @@ def loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel):
 
     return model
 
-
 def performEpoch(loader, model, opt=None, device=None, use_tqdm=True):
     totalCorrect, totalError, totalLoss = 0., 0., 0.
+    #correct = 0
+    #total = 0
     if opt is None: #Test
         model.eval()
     else: #Train
@@ -120,26 +119,30 @@ def performEpoch(loader, model, opt=None, device=None, use_tqdm=True):
         X, Y = X.to(device), Y.to(device)
 
 
-        yp = model(X)
-        loss = nn.CrossEntropyLoss()(yp, Y)
+        outputs = model(X)
+        loss = nn.CrossEntropyLoss()(outputs, Y)
         if opt:
             opt.zero_grad()
             loss.backward()
             opt.step()
 
-        totalCorrect += (yp.max(dim=1)[1] == Y).sum().item()
-        totalError += (yp.max(dim=1)[1] != Y).sum().item()
+        #_, predicted = torch.max(outputs.data, 1)
+        #total += Y.size(0)
+        #correct += (predicted == Y).sum().item()
+        totalCorrect += (outputs.max(dim=1)[1] == Y).sum().item()
+        totalError += (outputs.max(dim=1)[1] != Y).sum().item()
         totalLoss += loss.item() * X.shape[0]
 
         if use_tqdm:
             pbar.update(1)
 
+    #print("New accuracy: %.1f %%" % (100 * correct / total))
     return totalCorrect / len(loader.dataset), totalError / len(loader.dataset), totalLoss / len(loader.dataset)
 
 # Trains the model in-place, and saves after every epoch to savePath.
 def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr, lr, savePath, loadPath, pretrainedModel, getPlot, getResultTxt, mean, var, inputSize):
 
-    trainloader, testloader = loadDataset(datasetName, batchSize, mean, var, inputSize)
+    trainLoader, testLoader = loadDataset(datasetName, batchSize, mean, var, inputSize)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel)
@@ -148,7 +151,8 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
 
     optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9)
 
-    resultModelPath = resultsPath + modelName + "_" + datasetName + "_" + activationFunction
+    resultModelPath = resultsPath + modelName
+    resultModelPath += "_" + datasetName + "_" + activationFunction
     if activationFunction == "k-WTA":
         resultModelPath += "_" + str(kWTAsr)
     if pretrainedModel:
@@ -159,24 +163,36 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
     if getResultTxt:
         resultFile = open(resultFilePath, "w")
 
-    start = time()
-
     accValuesTrain = []
     lossValuesTrain = []
     errorValuesTrain = []
     accValuesTest = []
     lossValuesTest = []
     errorValuesTest = []
-    for epoch in range(epochs):
-        train_acc, train_err, train_loss = performEpoch(trainloader, model, optimizer, device=device, use_tqdm=True)
-        print("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy :" + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss))
 
-        test_acc, test_err, test_loss = performEpoch(testloader, model, device=device, use_tqdm=True)
-        print("[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss))
+    timesPerEpoch = []
+
+    start = time()
+    for epoch in range(epochs):
+
+        #Train
+        trainStart = time()
+        train_acc, train_err, train_loss = performEpoch(trainLoader, model, optimizer, device=device, use_tqdm=True)
+        trainEnd = time()
+        timesPerEpoch.append(trainEnd-trainStart)
+        trainTime = str(datetime.timedelta(seconds=round(trainEnd-trainStart)))
+        print("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy :" + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss) + ", Time elapsed: " + trainTime)
+
+        #Test
+        testStart = time()
+        test_acc, test_err, test_loss = performEpoch(testLoader, model, device=device, use_tqdm=True)
+        testEnd = time()
+        testTime = str(datetime.timedelta(seconds=round(testEnd-testStart)))
+        print("[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss) + ", Time elapsed: " + testTime)
 
         if getResultTxt:
-            print("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy :" + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss), file = resultFile)
-            print("[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss), file = resultFile)
+            print("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy :" + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss) + ", Time elapsed: " + trainTime, file = resultFile)
+            print("[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss) + ", Time elapsed: " + testTime, file = resultFile)
 
         # save checkpoint after every epoch
         if savePath != "":
@@ -192,9 +208,12 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
         print(accValuesTrain)
 
     end = time()
-    print("Finished Training. Time Elapsed=%ds" % (end - start))
+    totalTime = str(datetime.timedelta(seconds=round(end-start)))
+    timesPerEpoch = np.array(timesPerEpoch)
+    averageTimePerEpoch = str(datetime.timedelta(seconds=round(timesPerEpoch.sum()/len(timesPerEpoch))))
+    print("Finished Training. Total time Elapsed: " + totalTime + ", average time per epoch: " + averageTimePerEpoch)
     if getResultTxt:
-        print("Time Elapsed=%ds" % (end - start), file = resultFile)
+        print("Time Elapsed: " + totalTime + ", average time per epoch: " + averageTimePerEpoch, file = resultFile)
         resultFile.close()
 
     if getPlot:
@@ -228,6 +247,69 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
 
         plt.savefig(plotPath)
 
+def test(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath, pretrainedModel, mean, var, inputSize):
+
+    if os.path.isfile(loadPath):
+        trainLoader, testLoader = loadDataset(datasetName, batchSize, mean, var, inputSize)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        model = loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel)
+        model.to(device)
+
+        start = time()
+        test_acc, test_err, test_loss = performEpoch(testLoader, model, device=device, use_tqdm=True)
+        end = time()
+        timeElapsed =  str(datetime.timedelta(seconds=round(end-start)))
+        print("Model " + modelName + "trained on " + datasetName + " with activation function " + activationFunction)
+        print("Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss))
+        print("Time Elapsed: " + timeElapsed)
+
+    else:
+        print("Model doesn't exist! Train the model first...")
+
+def testAdversial(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath, pretrainedModel, mean, var, inputSize, attackType, attackBatches):
+
+    if os.path.isfile(loadPath):
+        trainLoader, testLoader = loadDataset(datasetName, batchSize, mean, var, inputSize)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        model = loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel)
+        model.to(device)
+
+        model.eval()
+
+        for param in model.parameters():
+            param.requires_grad = False
+
+        # variables to keep track of foolbox attack's stats
+        robust_acc_sum = 0
+
+        for j, data in enumerate(testLoader, 0):
+            if j >= attackBatches:
+                break
+            images, labels = data[0].to(device), data[1].to(device)
+
+            fmodel = foolbox.PyTorchModel(model, bounds=(0,1))
+            # Paper uses l_inf metric for all attacks.
+            # Using parameters specified in paper's appendix D.1
+            if attackType == "PGD":
+                attack_fn = foolbox.attacks.LinfPGD(steps=40, random_start=True, rel_stepsize=0.003) #abs_stepsize=0.003)
+            elif attackType == "Deepfool":
+                attack_fn = foolbox.attacks.LinfDeepFoolAttack(steps=20, candidates=10)
+            #epsilons = [0.0, 0.001, 0.01, 0.03, 0.1, 0.3, 0.5, 1.0]
+            epsilons = [0.031] # value used in the paper
+            _, _, success = attack_fn(fmodel, images, labels, epsilons=epsilons)
+
+            robust_accuracy = 1 - success.double().mean(axis=-1)
+            robust_acc_sum += robust_accuracy
+            # Print stats after every minibatch
+            print("[Minibatch: %d] Accuracy: %f %%" % (j+1, 100*robust_accuracy.item()))
+
+        print("Robustness Accuracy: ", 100 * robust_acc_sum.item() / attackBatches, "%")
+
+    else:
+        print("Model doesn't exist! Train the model first...")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="k-WTA")
@@ -247,6 +329,8 @@ if __name__ == "__main__":
     parser.add_argument("--mean", type = int, help = "Mean", required = False, default=0)
     parser.add_argument("--var", type = int, help = "Var", required = False, default=1)
     parser.add_argument("--inputSize", type = int, help = "Input size", required = False, default=224)
+    parser.add_argument("--attack", type = str, help = "Attack: " + ", ".join(myAttacks), required = False, default = "")
+    parser.add_argument("--batches", type = int, help = "Attack batshes number", required = False, default=20)
     args = parser.parse_args()
     if args.task not in tasks:
         print("Invalid task %s" % args.task)
@@ -278,6 +362,12 @@ if __name__ == "__main__":
     mean = args.mean
     var = args.var
     inputSize = args.inputSize
+    attackType = args.attack
+    attackBatches = args.batches
+
+    if task == "attack" and attackType not in myAttacks:
+        print("Invalid attack type %s" % args.attack)
+        exit(1)
 
     savePath = ""
     if saveModel:
@@ -299,5 +389,7 @@ if __name__ == "__main__":
 
     if task == "train":
         train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr, lr, savePath, loadPath, pretrainedModel, getPlot, getResultTxt, mean, var, inputSize)
+    elif task == "test":
+        test(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath, pretrainedModel, mean, var, inputSize)
     elif task == "attack":
-        print("Attack")
+        testAdversial(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath, pretrainedModel, mean, var, inputSize, attackType, attackBatches)
