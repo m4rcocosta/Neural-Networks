@@ -103,7 +103,7 @@ def loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel):
 
     return model
 
-def performEpoch(loader, model, opt=None, device=None, use_tqdm=True):
+def performEpoch(loader, model, opt=None, device=None):
     totalCorrect, totalError, totalLoss = 0., 0., 0.
     #correct = 0
     #total = 0
@@ -112,8 +112,7 @@ def performEpoch(loader, model, opt=None, device=None, use_tqdm=True):
     else: #Train
         model.train()
 
-    if use_tqdm: #Show progress bar
-        pbar = tqdm(total=len(loader))
+    pbar = tqdm(total=len(loader))
 
     for X, Y in loader:
         X, Y = X.to(device), Y.to(device)
@@ -133,8 +132,7 @@ def performEpoch(loader, model, opt=None, device=None, use_tqdm=True):
         totalError += (outputs.max(dim=1)[1] != Y).sum().item()
         totalLoss += loss.item() * X.shape[0]
 
-        if use_tqdm:
-            pbar.update(1)
+        pbar.update(1)
 
     #print("New accuracy: %.1f %%" % (100 * correct / total))
     return totalCorrect / len(loader.dataset), totalError / len(loader.dataset), totalLoss / len(loader.dataset)
