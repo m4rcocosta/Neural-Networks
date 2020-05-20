@@ -284,28 +284,41 @@ def testAdversial(modelName, datasetName, activationFunction, batchSize, kWTAsr,
         # variables to keep track of foolbox attack's stats
         robust_acc_sum = 0
 
+        descBar = tqdm(bar_format="{desc}")
+        descBar.set_description("Minibatch 0: n.d.")
+        descBar.refresh()
+        pbar = tqdm(total=attackBatches)
         for j, data in enumerate(testLoader, 0):
             if j >= attackBatches:
                 break
+
             images, labels = data[0].to(device), data[1].to(device)
 
             fmodel = foolbox.PyTorchModel(model, bounds=(0,1))
-            # Paper uses l_inf metric for all attacks.
+
             # Using parameters specified in paper's appendix D.1
             if attackType == "PGD":
-                attack_fn = foolbox.attacks.LinfPGD(steps=40, random_start=True, rel_stepsize=0.003) #abs_stepsize=0.003)
+                attack_fn = foolbox.attacks.LinfPGD(steps=40, random_start=True, rel_stepsize=0.003)
             elif attackType == "Deepfool":
                 attack_fn = foolbox.attacks.LinfDeepFoolAttack(steps=20, candidates=10)
-            #epsilons = [0.0, 0.001, 0.01, 0.03, 0.1, 0.3, 0.5, 1.0]
             epsilons = [0.031] # value used in the paper
             _, _, success = attack_fn(fmodel, images, labels, epsilons=epsilons)
 
             robust_accuracy = 1 - success.double().mean(axis=-1)
             robust_acc_sum += robust_accuracy
-            # Print stats after every minibatch
-            print("[Minibatch: %d] Accuracy: %f %%" % (j+1, 100*robust_accuracy.item()))
 
-        print("Robustness Accuracy: ", 100 * robust_acc_sum.item() / attackBatches, "%")
+            barText = "Minibatch %d: %.2f%%" % (j+1, 100*robust_accuracy.item())
+            descBar.set_description(barText)
+            descBar.refresh()
+
+            pbar.update(1)
+
+            #print("[Minibatch: %d] Accuracy: %.2f %%" % (j+1, 100*robust_accuracy.item()))
+
+        #print("Robustness Accuracy: ", 100 * robust_acc_sum.item() / attackBatches, "%")
+        barText = "Robustness Accuracy: %.2f%%" % (100 * robust_acc_sum.item() / attackBatches)
+        descBar.set_description(barText)
+        descBar.refresh()
 
     else:
         print("Model doesn't exist! Train the model first...")
