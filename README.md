@@ -22,7 +22,7 @@ Project for Neural Network course
 * Run the script with:
     * > python main.py
 * Specify the required parameters:
-    * > --task [train|test|testAdversial] - specify the task executed
+    * > --task [train|test|testAdversial] #specify the task executed
     * > --model [ResNet18|AlexNet] #choose the model
     * > --dataset [CIFAR-10|SVGH] #choose the dataset
     * > --activation [ReLU|k-WTA] #choose the activation function
