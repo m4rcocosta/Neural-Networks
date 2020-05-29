@@ -186,7 +186,7 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
         test_acc, test_err, test_loss = performEpoch(testLoader, model, device=device)
         testEnd = time()
         testTime = str(datetime.timedelta(seconds=round(testEnd-testStart)))
-        print("\n[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss) + ", Time elapsed: " + testTime)
+        print("[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss) + ", Time elapsed: " + testTime)
 
         if getResultTxt:
             print("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy :" + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss) + ", Time elapsed: " + trainTime, file = resultFile)
