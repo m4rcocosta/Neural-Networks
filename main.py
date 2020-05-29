@@ -175,7 +175,7 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
 
         #Train
         trainStart = time()
-        train_acc, train_err, train_loss = performEpoch(trainLoader, model, optimizer, device=device, use_tqdm=True)
+        train_acc, train_err, train_loss = performEpoch(trainLoader, model, optimizer, device=device)
         trainEnd = time()
         timesPerEpoch.append(trainEnd-trainStart)
         trainTime = str(datetime.timedelta(seconds=round(trainEnd-trainStart)))
@@ -183,10 +183,10 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
 
         #Test
         testStart = time()
-        test_acc, test_err, test_loss = performEpoch(testLoader, model, device=device, use_tqdm=True)
+        test_acc, test_err, test_loss = performEpoch(testLoader, model, device=device)
         testEnd = time()
         testTime = str(datetime.timedelta(seconds=round(testEnd-testStart)))
-        print("[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss) + ", Time elapsed: " + testTime)
+        print("\n[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss) + ", Time elapsed: " + testTime)
 
         if getResultTxt:
             print("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy :" + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss) + ", Time elapsed: " + trainTime, file = resultFile)
@@ -202,8 +202,6 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
         accValuesTest.append(test_acc)
         lossValuesTest.append(test_loss)
         errorValuesTest.append(test_err)
-
-        print(accValuesTrain)
 
     end = time()
     totalTime = str(datetime.timedelta(seconds=round(end-start)))
@@ -255,7 +253,7 @@ def test(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath
         model.to(device)
 
         start = time()
-        test_acc, test_err, test_loss = performEpoch(testLoader, model, device=device, use_tqdm=True)
+        test_acc, test_err, test_loss = performEpoch(testLoader, model, device=device)
         end = time()
         timeElapsed =  str(datetime.timedelta(seconds=round(end-start)))
         print("Model " + modelName + "trained on " + datasetName + " with activation function " + activationFunction)
