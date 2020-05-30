@@ -103,7 +103,7 @@ def loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel):
 
     return model
 
-def performEpoch(loader, model, opt=None, device=None):
+def performEpoch(loader, model, pbar, opt=None, device=None):
     totalCorrect, totalError, totalLoss = 0., 0., 0.
     #correct = 0
     #total = 0
@@ -112,7 +112,7 @@ def performEpoch(loader, model, opt=None, device=None):
     else: #Train
         model.train()
 
-    pbar = tqdm(total=len(loader))
+    pbar.total = len(loader)
 
     for X, Y in loader:
         X, Y = X.to(device), Y.to(device)
@@ -133,6 +133,7 @@ def performEpoch(loader, model, opt=None, device=None):
         totalLoss += loss.item() * X.shape[0]
 
         pbar.update(1)
+    #pbar.refresh()
 
     #print("New accuracy: %.1f %%" % (100 * correct / total))
     return totalCorrect / len(loader.dataset), totalError / len(loader.dataset), totalLoss / len(loader.dataset)
@@ -170,26 +171,30 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
 
     timesPerEpoch = []
 
+    pbar = tqdm()
+
     start = time()
     for epoch in range(epochs):
 
         #Train
         trainStart = time()
-        train_acc, train_err, train_loss = performEpoch(trainLoader, model, optimizer, device=device)
+        pbar.reset()
+        train_acc, train_err, train_loss = performEpoch(trainLoader, model, pbar, opt=optimizer, device=device)
         trainEnd = time()
         timesPerEpoch.append(trainEnd-trainStart)
         trainTime = str(datetime.timedelta(seconds=round(trainEnd-trainStart)))
-        print("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy :" + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss) + ", Time elapsed: " + trainTime)
+        pbar.write("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss) + ", Time elapsed: " + trainTime)
 
         #Test
         testStart = time()
-        test_acc, test_err, test_loss = performEpoch(testLoader, model, device=device)
+        pbar.reset()
+        test_acc, test_err, test_loss = performEpoch(testLoader, model, pbar, opt=None, device=device)
         testEnd = time()
         testTime = str(datetime.timedelta(seconds=round(testEnd-testStart)))
-        print("[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss) + ", Time elapsed: " + testTime)
+        pbar.write("[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss) + ", Time elapsed: " + testTime)
 
         if getResultTxt:
-            print("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy :" + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss) + ", Time elapsed: " + trainTime, file = resultFile)
+            print("\n[TRAIN] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(train_acc) + ", Error: " + str(train_err) + ", Loss: " + str(train_loss) + ", Time elapsed: " + trainTime, file = resultFile)
             print("[TEST] Epoch: " + str(epoch + 1) + ", Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss) + ", Time elapsed: " + testTime, file = resultFile)
 
         # save checkpoint after every epoch
@@ -204,6 +209,7 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
         errorValuesTest.append(test_err)
 
     end = time()
+    pbar.close()
     totalTime = str(datetime.timedelta(seconds=round(end-start)))
     timesPerEpoch = np.array(timesPerEpoch)
     averageTimePerEpoch = str(datetime.timedelta(seconds=round(timesPerEpoch.sum()/len(timesPerEpoch))))
@@ -252,8 +258,10 @@ def test(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath
         model = loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel)
         model.to(device)
 
+        pbar = tqdm()
+
         start = time()
-        test_acc, test_err, test_loss = performEpoch(testLoader, model, device=device)
+        test_acc, test_err, test_loss = performEpoch(testLoader, model, pbar, opt=None, device=device)
         end = time()
         timeElapsed =  str(datetime.timedelta(seconds=round(end-start)))
         print("Model " + modelName + "trained on " + datasetName + " with activation function " + activationFunction)
