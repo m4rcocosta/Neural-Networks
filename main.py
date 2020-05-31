@@ -264,9 +264,10 @@ def test(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath
         test_acc, test_err, test_loss = performEpoch(testLoader, model, pbar, opt=None, device=device)
         end = time()
         timeElapsed =  str(datetime.timedelta(seconds=round(end-start)))
-        print("Model " + modelName + "trained on " + datasetName + " with activation function " + activationFunction)
-        print("Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss))
-        print("Time Elapsed: " + timeElapsed)
+        pbar.write("Model " + modelName + " trained on " + datasetName + " with activation function " + activationFunction)
+        pbar.write("Accuracy: " + str(test_acc) + ", Error: " + str(test_err) + ", Loss: " + str(test_loss))
+        pbar.write("Time Elapsed: " + timeElapsed)
+        pbar.close()
 
     else:
         print("Model doesn't exist! Train the model first...")
@@ -288,9 +289,6 @@ def testAdversial(modelName, datasetName, activationFunction, batchSize, kWTAsr,
         # variables to keep track of foolbox attack's stats
         robust_acc_sum = 0
 
-        descBar = tqdm(bar_format="{desc}")
-        descBar.set_description("Minibatch 0: n.d.")
-        descBar.refresh()
         pbar = tqdm(total=attackBatches)
         for j, data in enumerate(testLoader, 0):
             if j >= attackBatches:
@@ -312,17 +310,13 @@ def testAdversial(modelName, datasetName, activationFunction, batchSize, kWTAsr,
             robust_acc_sum += robust_accuracy
 
             barText = "Minibatch %d: %.2f%%" % (j+1, 100*robust_accuracy.item())
-            descBar.set_description(barText)
-            descBar.refresh()
+            pbar.write(barText)
 
             pbar.update(1)
 
-            #print("[Minibatch: %d] Accuracy: %.2f %%" % (j+1, 100*robust_accuracy.item()))
-
-        #print("Robustness Accuracy: ", 100 * robust_acc_sum.item() / attackBatches, "%")
         barText = "Robustness Accuracy: %.2f%%" % (100 * robust_acc_sum.item() / attackBatches)
-        descBar.set_description(barText)
-        descBar.refresh()
+        pbar.write(barText)
+        pbar.close()
 
     else:
         print("Model doesn't exist! Train the model first...")
