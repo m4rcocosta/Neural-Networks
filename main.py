@@ -303,7 +303,11 @@ def testAdversial(modelName, datasetName, activationFunction, batchSize, kWTAsr,
                 attack_fn = foolbox.attacks.LinfPGD(steps=40, random_start=True, rel_stepsize=0.003)
             elif attackType == "Deepfool":
                 attack_fn = foolbox.attacks.LinfDeepFoolAttack(steps=20, candidates=10)
-            epsilons = [0.031] # value used in the paper
+                
+            if datasetName == "CIFAR-10":
+                epsilons = [0.031]
+            elif datasetName == "SVHN":
+                epsilons = [0.047]
             _, _, success = attack_fn(fmodel, images, labels, epsilons=epsilons)
 
             robust_accuracy = 1 - success.double().mean(axis=-1)
