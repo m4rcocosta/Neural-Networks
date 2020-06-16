@@ -273,7 +273,7 @@ def test(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath
     else:
         print("Model doesn't exist! Train the model first...")
 
-def testAdversial(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath, pretrainedModel, mean, var, inputSize, attackType, attackBatches):
+def testAdversarial(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath, pretrainedModel, mean, var, inputSize, attackType, attackBatches):
 
     if os.path.isfile(loadPath):
         trainLoader, testLoader = loadDataset(datasetName, batchSize, mean, var, inputSize)
@@ -408,4 +408,4 @@ if __name__ == "__main__":
     elif task == "test":
         test(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath, pretrainedModel, mean, var, inputSize)
     elif task == "attack":
-        testAdversial(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath, pretrainedModel, mean, var, inputSize, attackType, attackBatches)
+        testAdversarial(modelName, datasetName, activationFunction, batchSize, kWTAsr, loadPath, pretrainedModel, mean, var, inputSize, attackType, attackBatches)
