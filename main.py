@@ -96,7 +96,7 @@ def loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel):
             model = torchvision.models.alexnet(pretrained=False)
 
     if activationFunction == "k-WTA":
-        setActivationkWTA(model, kWTA, sr=kWTAsr)
+        setActivationkWTA(model, nn.ReLU, sr=kWTAsr)
 
     if os.path.isfile(loadPath):
         model.load_state_dict(torch.load(loadPath))
@@ -123,6 +123,7 @@ def performEpoch(loader, model, pbar, opt=None, device=None):
         if opt:
             opt.zero_grad()
             loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), 0.5) # had to add clipping to fix exploding gradients
             opt.step()
 
         #_, predicted = torch.max(outputs.data, 1)
@@ -162,12 +163,12 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
     if getResultTxt:
         resultFile = open(resultFilePath, "w")
 
-    accValuesTrain = []
-    lossValuesTrain = []
-    errorValuesTrain = []
-    accValuesTest = []
-    lossValuesTest = []
-    errorValuesTest = []
+    accTrainHistory = []
+    lossTrainHistory = []
+    errorTrainHistory = []
+    accTestHistory = []
+    lossTestHistory = []
+    errorTestHistory = []
 
     timesPerEpoch = []
 
@@ -201,12 +202,12 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
         if savePath != "":
             torch.save(model.state_dict(), savePath)
 
-        accValuesTrain.append(train_acc)
-        lossValuesTrain.append(train_loss)
-        errorValuesTrain.append(train_err)
-        accValuesTest.append(test_acc)
-        lossValuesTest.append(test_loss)
-        errorValuesTest.append(test_err)
+        accTrainHistory.append(train_acc)
+        lossTrainHistory.append(train_loss)
+        errorTrainHistory.append(train_err)
+        accTestHistory.append(test_acc)
+        lossTestHistory.append(test_loss)
+        errorTestHistory.append(test_err)
 
     end = time()
     pbar.close()
@@ -235,16 +236,16 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
         ax1.set_title("Accuracy")
         ax2.set_title("Loss")
         ax3.set_title("Error")
-        ax1.plot(accValuesTrain, label="Train")
-        ax1.plot(accValuesTest, label="Test")
+        ax1.plot(accTrainHistory, label="Train")
+        ax1.plot(accTestHistory, label="Test")
         ax1.legend(loc = "upper left")
 
-        ax2.plot(lossValuesTrain, label="Train")
-        ax2.plot(lossValuesTest, label="Test")
+        ax2.plot(lossTrainHistory, label="Train")
+        ax2.plot(lossTestHistory, label="Test")
         ax2.legend(loc = "upper left")
 
-        ax3.plot(errorValuesTrain, label="Train")
-        ax3.plot(errorValuesTest, label="Test")
+        ax3.plot(errorTrainHistory, label="Train")
+        ax3.plot(errorTestHistory, label="Test")
         ax3.legend(loc = "upper left")
 
         plt.savefig(plotPath)
@@ -303,7 +304,7 @@ def testAdversial(modelName, datasetName, activationFunction, batchSize, kWTAsr,
                 attack_fn = foolbox.attacks.LinfPGD(steps=40, random_start=True, rel_stepsize=0.003)
             elif attackType == "Deepfool":
                 attack_fn = foolbox.attacks.LinfDeepFoolAttack(steps=20, candidates=10)
-                
+
             if datasetName == "CIFAR-10":
                 epsilons = [0.031]
             elif datasetName == "SVHN":
