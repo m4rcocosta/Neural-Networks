@@ -1,0 +1,241 @@
+
+[TRAIN] Epoch: 1, Accuracy: 0.26994, Error: 0.73006, Loss: 1.9640179818344117, Time elapsed: 0:09:40
+[TEST] Epoch: 1, Accuracy: 0.3677, Error: 0.6323, Loss: 1.7243181631088256, Time elapsed: 0:01:19
+
+[TRAIN] Epoch: 2, Accuracy: 0.37792, Error: 0.62208, Loss: 1.6652505110549927, Time elapsed: 0:09:53
+[TEST] Epoch: 2, Accuracy: 0.4384, Error: 0.5616, Loss: 1.5296037516593932, Time elapsed: 0:01:22
+
+[TRAIN] Epoch: 3, Accuracy: 0.44174, Error: 0.55826, Loss: 1.529955834236145, Time elapsed: 0:09:45
+[TEST] Epoch: 3, Accuracy: 0.4511, Error: 0.5489, Loss: 1.4654601167678833, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 4, Accuracy: 0.47976, Error: 0.52024, Loss: 1.4366080471038818, Time elapsed: 0:09:37
+[TEST] Epoch: 4, Accuracy: 0.5258, Error: 0.4742, Loss: 1.3091744287490845, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 5, Accuracy: 0.50974, Error: 0.49026, Loss: 1.3566086781311035, Time elapsed: 0:09:37
+[TEST] Epoch: 5, Accuracy: 0.5309, Error: 0.4691, Loss: 1.3127735479354858, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 6, Accuracy: 0.5381, Error: 0.4619, Loss: 1.2828917335891723, Time elapsed: 0:09:37
+[TEST] Epoch: 6, Accuracy: 0.5634, Error: 0.4366, Loss: 1.234441656112671, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 7, Accuracy: 0.5637, Error: 0.4363, Loss: 1.2122304944610596, Time elapsed: 0:09:37
+[TEST] Epoch: 7, Accuracy: 0.5696, Error: 0.4304, Loss: 1.2237837606430053, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 8, Accuracy: 0.58794, Error: 0.41206, Loss: 1.1495879665374755, Time elapsed: 0:09:37
+[TEST] Epoch: 8, Accuracy: 0.6045, Error: 0.3955, Loss: 1.1227165376663208, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 9, Accuracy: 0.60706, Error: 0.39294, Loss: 1.1029159516143798, Time elapsed: 0:09:37
+[TEST] Epoch: 9, Accuracy: 0.5792, Error: 0.4208, Loss: 1.223867404937744, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 10, Accuracy: 0.62688, Error: 0.37312, Loss: 1.0511129860305786, Time elapsed: 0:09:41
+[TEST] Epoch: 10, Accuracy: 0.6436, Error: 0.3564, Loss: 1.0001966612815858, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 11, Accuracy: 0.64556, Error: 0.35444, Loss: 0.9956903182792664, Time elapsed: 0:09:38
+[TEST] Epoch: 11, Accuracy: 0.6655, Error: 0.3345, Loss: 0.9635172733306885, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 12, Accuracy: 0.66452, Error: 0.33548, Loss: 0.9468848081588745, Time elapsed: 0:09:38
+[TEST] Epoch: 12, Accuracy: 0.676, Error: 0.324, Loss: 0.9297775211334228, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 13, Accuracy: 0.68344, Error: 0.31656, Loss: 0.8916305185890198, Time elapsed: 0:09:38
+[TEST] Epoch: 13, Accuracy: 0.693, Error: 0.307, Loss: 0.8819184646606445, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 14, Accuracy: 0.70118, Error: 0.29882, Loss: 0.8457428648757934, Time elapsed: 0:09:37
+[TEST] Epoch: 14, Accuracy: 0.7064, Error: 0.2936, Loss: 0.8649438541412353, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 15, Accuracy: 0.71644, Error: 0.28356, Loss: 0.8058059826087952, Time elapsed: 0:09:37
+[TEST] Epoch: 15, Accuracy: 0.7221, Error: 0.2779, Loss: 0.81210410861969, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 16, Accuracy: 0.7308, Error: 0.2692, Loss: 0.7657105024147034, Time elapsed: 0:09:37
+[TEST] Epoch: 16, Accuracy: 0.7206, Error: 0.2794, Loss: 0.8160081405639649, Time elapsed: 0:01:20
+
+[TRAIN] Epoch: 17, Accuracy: 0.74296, Error: 0.25704, Loss: 0.727773750591278, Time elapsed: 0:09:42
+[TEST] Epoch: 17, Accuracy: 0.736, Error: 0.264, Loss: 0.7747825891494751, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 18, Accuracy: 0.75704, Error: 0.24296, Loss: 0.6904149112129211, Time elapsed: 0:09:38
+[TEST] Epoch: 18, Accuracy: 0.7512, Error: 0.2488, Loss: 0.7310751717567444, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 19, Accuracy: 0.76664, Error: 0.23336, Loss: 0.6649408964157104, Time elapsed: 0:09:37
+[TEST] Epoch: 19, Accuracy: 0.755, Error: 0.245, Loss: 0.7139219769477845, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 20, Accuracy: 0.7769, Error: 0.2231, Loss: 0.6313066880035401, Time elapsed: 0:09:37
+[TEST] Epoch: 20, Accuracy: 0.7608, Error: 0.2392, Loss: 0.7019212780952454, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 21, Accuracy: 0.78954, Error: 0.21046, Loss: 0.6029267399597168, Time elapsed: 0:09:38
+[TEST] Epoch: 21, Accuracy: 0.764, Error: 0.236, Loss: 0.6906659702301026, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 22, Accuracy: 0.7986, Error: 0.2014, Loss: 0.5760165487670899, Time elapsed: 0:09:38
+[TEST] Epoch: 22, Accuracy: 0.7696, Error: 0.2304, Loss: 0.6903563366889953, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 23, Accuracy: 0.80818, Error: 0.19182, Loss: 0.5482678264427185, Time elapsed: 0:09:37
+[TEST] Epoch: 23, Accuracy: 0.7757, Error: 0.2243, Loss: 0.6833222118377685, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 24, Accuracy: 0.8148, Error: 0.1852, Loss: 0.5263681095314026, Time elapsed: 0:09:37
+[TEST] Epoch: 24, Accuracy: 0.7627, Error: 0.2373, Loss: 0.7041214580535888, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 25, Accuracy: 0.82514, Error: 0.17486, Loss: 0.5012216814804077, Time elapsed: 0:09:37
+[TEST] Epoch: 25, Accuracy: 0.7899, Error: 0.2101, Loss: 0.6332081405639648, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 26, Accuracy: 0.83112, Error: 0.16888, Loss: 0.4817887395858765, Time elapsed: 0:09:37
+[TEST] Epoch: 26, Accuracy: 0.7864, Error: 0.2136, Loss: 0.6357895278930664, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 27, Accuracy: 0.8373, Error: 0.1627, Loss: 0.4582186673927307, Time elapsed: 0:09:37
+[TEST] Epoch: 27, Accuracy: 0.7905, Error: 0.2095, Loss: 0.6376509062767028, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 28, Accuracy: 0.84564, Error: 0.15436, Loss: 0.44039236833572387, Time elapsed: 0:09:37
+[TEST] Epoch: 28, Accuracy: 0.8013, Error: 0.1987, Loss: 0.6093747965812684, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 29, Accuracy: 0.85036, Error: 0.14964, Loss: 0.42628798776626586, Time elapsed: 0:09:37
+[TEST] Epoch: 29, Accuracy: 0.8054, Error: 0.1946, Loss: 0.6078967112541199, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 30, Accuracy: 0.85758, Error: 0.14242, Loss: 0.40781269506454465, Time elapsed: 0:09:37
+[TEST] Epoch: 30, Accuracy: 0.8075, Error: 0.1925, Loss: 0.5942277278900147, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 31, Accuracy: 0.86486, Error: 0.13514, Loss: 0.3888122244262695, Time elapsed: 0:09:37
+[TEST] Epoch: 31, Accuracy: 0.8045, Error: 0.1955, Loss: 0.6180768633842468, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 32, Accuracy: 0.86954, Error: 0.13046, Loss: 0.3714959245491028, Time elapsed: 0:09:37
+[TEST] Epoch: 32, Accuracy: 0.8094, Error: 0.1906, Loss: 0.6200462520599366, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 33, Accuracy: 0.87578, Error: 0.12422, Loss: 0.3520826624107361, Time elapsed: 0:09:38
+[TEST] Epoch: 33, Accuracy: 0.8127, Error: 0.1873, Loss: 0.6017740293502808, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 34, Accuracy: 0.8813, Error: 0.1187, Loss: 0.3376863510322571, Time elapsed: 0:09:36
+[TEST] Epoch: 34, Accuracy: 0.8227, Error: 0.1773, Loss: 0.5761060640335083, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 35, Accuracy: 0.8861, Error: 0.1139, Loss: 0.323738678855896, Time elapsed: 0:09:37
+[TEST] Epoch: 35, Accuracy: 0.8158, Error: 0.1842, Loss: 0.6002131510734559, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 36, Accuracy: 0.89246, Error: 0.10754, Loss: 0.30636758096694944, Time elapsed: 0:09:37
+[TEST] Epoch: 36, Accuracy: 0.823, Error: 0.177, Loss: 0.57232382478714, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 37, Accuracy: 0.8944, Error: 0.1056, Loss: 0.2975900224685669, Time elapsed: 0:09:37
+[TEST] Epoch: 37, Accuracy: 0.8214, Error: 0.1786, Loss: 0.5829497011184692, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 38, Accuracy: 0.90162, Error: 0.09838, Loss: 0.27980616846084594, Time elapsed: 0:09:37
+[TEST] Epoch: 38, Accuracy: 0.8282, Error: 0.1718, Loss: 0.5742737278938294, Time elapsed: 0:01:22
+
+[TRAIN] Epoch: 39, Accuracy: 0.90452, Error: 0.09548, Loss: 0.27156143450736997, Time elapsed: 0:09:39
+[TEST] Epoch: 39, Accuracy: 0.8215, Error: 0.1785, Loss: 0.6012955159187316, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 40, Accuracy: 0.90664, Error: 0.09336, Loss: 0.2646282235527039, Time elapsed: 0:09:44
+[TEST] Epoch: 40, Accuracy: 0.8253, Error: 0.1747, Loss: 0.5817840230941772, Time elapsed: 0:01:19
+
+[TRAIN] Epoch: 41, Accuracy: 0.91352, Error: 0.08648, Loss: 0.24700923221588134, Time elapsed: 0:09:47
+[TEST] Epoch: 41, Accuracy: 0.8242, Error: 0.1758, Loss: 0.5751821227073669, Time elapsed: 0:01:19
+
+[TRAIN] Epoch: 42, Accuracy: 0.91484, Error: 0.08516, Loss: 0.2404791964149475, Time elapsed: 0:09:38
+[TEST] Epoch: 42, Accuracy: 0.8263, Error: 0.1737, Loss: 0.6051581881523133, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 43, Accuracy: 0.9191, Error: 0.0809, Loss: 0.23035481550216674, Time elapsed: 0:09:37
+[TEST] Epoch: 43, Accuracy: 0.823, Error: 0.177, Loss: 0.6164929372787475, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 44, Accuracy: 0.92204, Error: 0.07796, Loss: 0.21758148170471192, Time elapsed: 0:09:37
+[TEST] Epoch: 44, Accuracy: 0.8332, Error: 0.1668, Loss: 0.5761338089942932, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 45, Accuracy: 0.92762, Error: 0.07238, Loss: 0.20528320655822754, Time elapsed: 0:09:37
+[TEST] Epoch: 45, Accuracy: 0.8327, Error: 0.1673, Loss: 0.5826717732429504, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 46, Accuracy: 0.92964, Error: 0.07036, Loss: 0.2001286040878296, Time elapsed: 0:09:41
+[TEST] Epoch: 46, Accuracy: 0.8283, Error: 0.1717, Loss: 0.6070496588706971, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 47, Accuracy: 0.9336, Error: 0.0664, Loss: 0.1908807810974121, Time elapsed: 0:09:37
+[TEST] Epoch: 47, Accuracy: 0.8395, Error: 0.1605, Loss: 0.5721872468948365, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 48, Accuracy: 0.93872, Error: 0.06128, Loss: 0.17479398042678834, Time elapsed: 0:09:38
+[TEST] Epoch: 48, Accuracy: 0.844, Error: 0.156, Loss: 0.5894081866264343, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 49, Accuracy: 0.93902, Error: 0.06098, Loss: 0.17360843194961548, Time elapsed: 0:09:37
+[TEST] Epoch: 49, Accuracy: 0.843, Error: 0.157, Loss: 0.5797973079681397, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 50, Accuracy: 0.94318, Error: 0.05682, Loss: 0.16111117456436158, Time elapsed: 0:09:37
+[TEST] Epoch: 50, Accuracy: 0.8353, Error: 0.1647, Loss: 0.6065809791564941, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 51, Accuracy: 0.94068, Error: 0.05932, Loss: 0.16212544000625612, Time elapsed: 0:09:37
+[TEST] Epoch: 51, Accuracy: 0.8422, Error: 0.1578, Loss: 0.5866402997970581, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 52, Accuracy: 0.94734, Error: 0.05266, Loss: 0.15015794868469237, Time elapsed: 0:09:36
+[TEST] Epoch: 52, Accuracy: 0.8356, Error: 0.1644, Loss: 0.6285939141273499, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 53, Accuracy: 0.94904, Error: 0.05096, Loss: 0.14772270758628844, Time elapsed: 0:09:36
+[TEST] Epoch: 53, Accuracy: 0.8438, Error: 0.1562, Loss: 0.5982953783988952, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 54, Accuracy: 0.95232, Error: 0.04768, Loss: 0.13413079736709596, Time elapsed: 0:09:36
+[TEST] Epoch: 54, Accuracy: 0.8407, Error: 0.1593, Loss: 0.5846736614227295, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 55, Accuracy: 0.95284, Error: 0.04716, Loss: 0.13578460487365723, Time elapsed: 0:09:36
+[TEST] Epoch: 55, Accuracy: 0.8372, Error: 0.1628, Loss: 0.6170148151397705, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 56, Accuracy: 0.95502, Error: 0.04498, Loss: 0.12898761144638063, Time elapsed: 0:09:36
+[TEST] Epoch: 56, Accuracy: 0.8481, Error: 0.1519, Loss: 0.5908981945037842, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 57, Accuracy: 0.95688, Error: 0.04312, Loss: 0.12121187840461731, Time elapsed: 0:09:36
+[TEST] Epoch: 57, Accuracy: 0.8478, Error: 0.1522, Loss: 0.5933507537841797, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 58, Accuracy: 0.9581, Error: 0.0419, Loss: 0.11890066773414612, Time elapsed: 0:09:36
+[TEST] Epoch: 58, Accuracy: 0.8512, Error: 0.1488, Loss: 0.5942836506843567, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 59, Accuracy: 0.96178, Error: 0.03822, Loss: 0.11187844909667968, Time elapsed: 0:09:38
+[TEST] Epoch: 59, Accuracy: 0.8454, Error: 0.1546, Loss: 0.6120675101280212, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 60, Accuracy: 0.9644, Error: 0.0356, Loss: 0.10558638883590699, Time elapsed: 0:09:37
+[TEST] Epoch: 60, Accuracy: 0.8454, Error: 0.1546, Loss: 0.6046203760147095, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 61, Accuracy: 0.96534, Error: 0.03466, Loss: 0.10204593957901001, Time elapsed: 0:09:38
+[TEST] Epoch: 61, Accuracy: 0.8518, Error: 0.1482, Loss: 0.6190414408683776, Time elapsed: 0:01:19
+
+[TRAIN] Epoch: 62, Accuracy: 0.9652, Error: 0.0348, Loss: 0.09798748991012574, Time elapsed: 0:09:50
+[TEST] Epoch: 62, Accuracy: 0.8499, Error: 0.1501, Loss: 0.6337522430419922, Time elapsed: 0:01:20
+
+[TRAIN] Epoch: 63, Accuracy: 0.96568, Error: 0.03432, Loss: 0.0974866019630432, Time elapsed: 0:10:01
+[TEST] Epoch: 63, Accuracy: 0.8496, Error: 0.1504, Loss: 0.6130683024406434, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 64, Accuracy: 0.9689, Error: 0.0311, Loss: 0.09037345321655274, Time elapsed: 0:09:39
+[TEST] Epoch: 64, Accuracy: 0.855, Error: 0.145, Loss: 0.6249521982192994, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 65, Accuracy: 0.97218, Error: 0.02782, Loss: 0.08091248332977295, Time elapsed: 0:09:45
+[TEST] Epoch: 65, Accuracy: 0.852, Error: 0.148, Loss: 0.6172603193283082, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 66, Accuracy: 0.96996, Error: 0.03004, Loss: 0.08770457702636719, Time elapsed: 0:09:37
+[TEST] Epoch: 66, Accuracy: 0.8481, Error: 0.1519, Loss: 0.638315710735321, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 67, Accuracy: 0.97194, Error: 0.02806, Loss: 0.08150965650558471, Time elapsed: 0:09:36
+[TEST] Epoch: 67, Accuracy: 0.8515, Error: 0.1485, Loss: 0.6393857197761535, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 68, Accuracy: 0.97264, Error: 0.02736, Loss: 0.07966614368438721, Time elapsed: 0:09:36
+[TEST] Epoch: 68, Accuracy: 0.8563, Error: 0.1437, Loss: 0.6138236200332642, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 69, Accuracy: 0.97346, Error: 0.02654, Loss: 0.07616860982894898, Time elapsed: 0:09:37
+[TEST] Epoch: 69, Accuracy: 0.8518, Error: 0.1482, Loss: 0.6430771793365478, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 70, Accuracy: 0.97514, Error: 0.02486, Loss: 0.07152372177124024, Time elapsed: 0:09:37
+[TEST] Epoch: 70, Accuracy: 0.8534, Error: 0.1466, Loss: 0.6177479419708252, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 71, Accuracy: 0.9748, Error: 0.0252, Loss: 0.07413543874740601, Time elapsed: 0:09:37
+[TEST] Epoch: 71, Accuracy: 0.8526, Error: 0.1474, Loss: 0.6408857282638549, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 72, Accuracy: 0.97766, Error: 0.02234, Loss: 0.06509895462036133, Time elapsed: 0:09:37
+[TEST] Epoch: 72, Accuracy: 0.8571, Error: 0.1429, Loss: 0.6403849569320679, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 73, Accuracy: 0.97744, Error: 0.02256, Loss: 0.06537635475158692, Time elapsed: 0:09:37
+[TEST] Epoch: 73, Accuracy: 0.8546, Error: 0.1454, Loss: 0.6403079169273377, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 74, Accuracy: 0.97832, Error: 0.02168, Loss: 0.06218839153289795, Time elapsed: 0:09:38
+[TEST] Epoch: 74, Accuracy: 0.8519, Error: 0.1481, Loss: 0.6691916164398193, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 75, Accuracy: 0.9787, Error: 0.0213, Loss: 0.06143166233062744, Time elapsed: 0:09:38
+[TEST] Epoch: 75, Accuracy: 0.8565, Error: 0.1435, Loss: 0.6498467605590821, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 76, Accuracy: 0.9814, Error: 0.0186, Loss: 0.0568070982170105, Time elapsed: 0:09:37
+[TEST] Epoch: 76, Accuracy: 0.8596, Error: 0.1404, Loss: 0.6416376408576965, Time elapsed: 0:01:18
+
+[TRAIN] Epoch: 77, Accuracy: 0.98072, Error: 0.01928, Loss: 0.05663442279815674, Time elapsed: 0:09:36
+[TEST] Epoch: 77, Accuracy: 0.8572, Error: 0.1428, Loss: 0.6396211050033569, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 78, Accuracy: 0.9799, Error: 0.0201, Loss: 0.057980673904418946, Time elapsed: 0:09:37
+[TEST] Epoch: 78, Accuracy: 0.8559, Error: 0.1441, Loss: 0.6483796718597412, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 79, Accuracy: 0.98092, Error: 0.01908, Loss: 0.05695308048248291, Time elapsed: 0:09:36
+[TEST] Epoch: 79, Accuracy: 0.852, Error: 0.148, Loss: 0.663650658607483, Time elapsed: 0:01:17
+
+[TRAIN] Epoch: 80, Accuracy: 0.98182, Error: 0.01818, Loss: 0.0542095555305481, Time elapsed: 0:09:36
+[TEST] Epoch: 80, Accuracy: 0.8628, Error: 0.1372, Loss: 0.6230552624702453, Time elapsed: 0:01:17
+Time Elapsed: 14:34:53, average time per epoch: 0:09:38
