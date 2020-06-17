@@ -209,11 +209,11 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
         errorTestHistory.append(test_err)
 
     end = time()
-    pbar.close()
     totalTime = str(datetime.timedelta(seconds=round(end-start)))
     timesPerEpoch = np.array(timesPerEpoch)
     averageTimePerEpoch = str(datetime.timedelta(seconds=round(timesPerEpoch.sum()/len(timesPerEpoch))))
-    print("Finished Training. Total time Elapsed: " + totalTime + ", average time per epoch: " + averageTimePerEpoch)
+    pbar.write("\nFinished Training. Total time Elapsed: " + totalTime + ", average time per epoch: " + averageTimePerEpoch)
+    pbar.close()
     if getResultTxt:
         print("Time Elapsed: " + totalTime + ", average time per epoch: " + averageTimePerEpoch, file = resultFile)
         resultFile.close()
