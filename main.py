@@ -289,7 +289,19 @@ def testAdversarial(modelName, datasetName, activationFunction, batchSize, kWTAs
         # variables to keep track of foolbox attack's stats
         robust_acc_sum = 0
 
+        resultModelPath = resultsPath + "TestAdversarial_" + modelName
+        resultModelPath += "_" + datasetName + "_" + activationFunction
+        if activationFunction == "k-WTA":
+            resultModelPath += "_" + str(kWTAsr)
+        if pretrainedModel:
+            resultModelPath += "_Pretrained"
+        resultFilePath = resultModelPath + ".txt"
+
+        if getResultTxt:
+            resultFile = open(resultFilePath, "w")
+
         pbar = tqdm(total=attackBatches)
+        start = time()
         for j, data in enumerate(testLoader, 0):
             if j >= attackBatches:
                 break
@@ -308,19 +320,32 @@ def testAdversarial(modelName, datasetName, activationFunction, batchSize, kWTAs
                 epsilons = [0.031]
             elif datasetName == "SVHN":
                 epsilons = [0.047]
+
+            minibatchStart = time()
             _, _, success = attack_fn(fmodel, images, labels, epsilons=epsilons)
+            minibatchEnd = time()
+            minibatchTime = str(datetime.timedelta(seconds=round(minibatchEnd-minibatchStart)))
 
             robust_accuracy = 1 - success.double().mean(axis=-1)
             robust_acc_sum += robust_accuracy
 
-            barText = "Minibatch %d: %.2f%%" % (j+1, 100*robust_accuracy.item())
+            barText = "Minibatch %d: %.2f%%" % (j+1, 100*robust_accuracy.item() + ", Time elapsed: " + minibatchTime)
             pbar.write(barText)
+
+            if getResultTxt:
+                print(barText, file = resultFile)
 
             pbar.update(1)
 
-        barText = "Robustness Accuracy: %.2f%%" % (100 * robust_acc_sum.item() / attackBatches)
+        end = time()
+        totalTime = str(datetime.timedelta(seconds=round(end-start)))
+        barText = "Robustness Accuracy: %.2f%%" % (100 * robust_acc_sum.item() / attackBatches +  + ", Total time elapsed: " + totalTime)
         pbar.write(barText)
         pbar.close()
+
+        if getResultTxt:
+            print(barText, file = resultFile)
+            resultFile.close()
 
     else:
         print("Model doesn't exist! Train the model first...")
