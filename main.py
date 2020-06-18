@@ -329,7 +329,7 @@ def testAdversarial(modelName, datasetName, activationFunction, batchSize, kWTAs
             robust_accuracy = 1 - success.double().mean(axis=-1)
             robust_acc_sum += robust_accuracy
 
-            barText = "Minibatch %d: %.2f%%" % (j+1, 100*robust_accuracy.item() + ", Time elapsed: " + minibatchTime)
+            barText = "Minibatch %d: %.2f%%" % (j+1, 100*robust_accuracy.item()) + ", Time elapsed: " + minibatchTime
             pbar.write(barText)
 
             if getResultTxt:
@@ -339,7 +339,7 @@ def testAdversarial(modelName, datasetName, activationFunction, batchSize, kWTAs
 
         end = time()
         totalTime = str(datetime.timedelta(seconds=round(end-start)))
-        barText = "Robustness Accuracy: %.2f%%" % (100 * robust_acc_sum.item() / attackBatches +  + ", Total time elapsed: " + totalTime)
+        barText = "Robustness Accuracy: %.2f%%" % (100 * robust_acc_sum.item() / attackBatches) + ", Total time elapsed: " + totalTime
         pbar.write(barText)
         pbar.close()
 
