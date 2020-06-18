@@ -95,11 +95,11 @@ def loadModel(modelName, activationFunction, kWTAsr, loadPath, pretrainedModel):
         else:
             model = torchvision.models.alexnet(pretrained=False)
 
-    if activationFunction == "k-WTA":
-        setActivationkWTA(model, nn.ReLU, sr=kWTAsr)
-
     if os.path.isfile(loadPath):
         model.load_state_dict(torch.load(loadPath))
+
+    if activationFunction == "k-WTA":
+        setActivationkWTA(model, nn.ReLU, sr=kWTAsr)
 
     return model
 
@@ -289,7 +289,7 @@ def testAdversarial(modelName, datasetName, activationFunction, batchSize, kWTAs
         # variables to keep track of foolbox attack's stats
         robust_acc_sum = 0
 
-        resultModelPath = resultsPath + "TestAdversarial_" + modelName
+        resultModelPath = resultsPath + "TestAdversarial_" + attackType + "_" + modelName
         resultModelPath += "_" + datasetName + "_" + activationFunction
         if activationFunction == "k-WTA":
             resultModelPath += "_" + str(kWTAsr)
