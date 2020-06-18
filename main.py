@@ -175,6 +175,9 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
 
     start = time()
     for epoch in range(epochs):
+        if epoch == 50: #Change learning rate to 0.01 after 50 epochs like in the paper
+        for param_group in optimizer.param_groups:
+                param_group['lr'] = 0.01
 
         #Train
         trainStart = time()
