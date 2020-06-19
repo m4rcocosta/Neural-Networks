@@ -123,6 +123,7 @@ def performEpoch(loader, model, pbar, opt=None, device=None):
         if opt:
             opt.zero_grad()
             loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), 0.5) # To fix exploding gradients
             opt.step()
 
         #_, predicted = torch.max(outputs.data, 1)
