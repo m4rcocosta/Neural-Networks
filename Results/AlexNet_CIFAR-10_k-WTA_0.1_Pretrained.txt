@@ -1,0 +1,31 @@
+
+[TRAIN] Epoch: 1, Accuracy: 0.58772, Error: 0.41228, Loss: 1.1872333964920043, Time elapsed: 0:03:01
+[TEST] Epoch: 1, Accuracy: 0.7395, Error: 0.2605, Loss: 0.75184782371521, Time elapsed: 0:00:20
+
+[TRAIN] Epoch: 2, Accuracy: 0.73754, Error: 0.26246, Loss: 0.7602621243858337, Time elapsed: 0:03:02
+[TEST] Epoch: 2, Accuracy: 0.775, Error: 0.225, Loss: 0.6479687937736511, Time elapsed: 0:00:20
+
+[TRAIN] Epoch: 3, Accuracy: 0.77296, Error: 0.22704, Loss: 0.6573716625976562, Time elapsed: 0:03:03
+[TEST] Epoch: 3, Accuracy: 0.8053, Error: 0.1947, Loss: 0.5669479555130005, Time elapsed: 0:00:20
+
+[TRAIN] Epoch: 4, Accuracy: 0.79548, Error: 0.20452, Loss: 0.5963119745063782, Time elapsed: 0:03:01
+[TEST] Epoch: 4, Accuracy: 0.8058, Error: 0.1942, Loss: 0.5653259986877441, Time elapsed: 0:00:20
+
+[TRAIN] Epoch: 5, Accuracy: 0.80488, Error: 0.19512, Loss: 0.5644616808223725, Time elapsed: 0:03:01
+[TEST] Epoch: 5, Accuracy: 0.833, Error: 0.167, Loss: 0.48002532205581666, Time elapsed: 0:00:20
+
+[TRAIN] Epoch: 6, Accuracy: 0.81214, Error: 0.18786, Loss: 0.5456592560195923, Time elapsed: 0:03:01
+[TEST] Epoch: 6, Accuracy: 0.8122, Error: 0.1878, Loss: 0.559220039176941, Time elapsed: 0:00:20
+
+[TRAIN] Epoch: 7, Accuracy: 0.82044, Error: 0.17956, Loss: 0.523658358592987, Time elapsed: 0:03:00
+[TEST] Epoch: 7, Accuracy: 0.8083, Error: 0.1917, Loss: 0.5596661454200744, Time elapsed: 0:00:20
+
+[TRAIN] Epoch: 8, Accuracy: 0.8226, Error: 0.1774, Loss: 0.521560687675476, Time elapsed: 0:03:01
+[TEST] Epoch: 8, Accuracy: 0.8525, Error: 0.1475, Loss: 0.4350083998680115, Time elapsed: 0:00:20
+
+[TRAIN] Epoch: 9, Accuracy: 0.82648, Error: 0.17352, Loss: 0.509852951374054, Time elapsed: 0:03:01
+[TEST] Epoch: 9, Accuracy: 0.8396, Error: 0.1604, Loss: 0.47837531404495237, Time elapsed: 0:00:20
+
+[TRAIN] Epoch: 10, Accuracy: 0.82856, Error: 0.17144, Loss: 0.49640770575523374, Time elapsed: 0:03:01
+[TEST] Epoch: 10, Accuracy: 0.8367, Error: 0.1633, Loss: 0.47906421132087706, Time elapsed: 0:00:20
+Time Elapsed: 0:33:32, average time per epoch: 0:03:01
