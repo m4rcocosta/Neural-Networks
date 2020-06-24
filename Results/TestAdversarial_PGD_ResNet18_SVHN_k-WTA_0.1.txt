@@ -1,0 +1,11 @@
+Minibatch 1: 90.62%, Time elapsed: 0:00:10
+Minibatch 2: 81.25%, Time elapsed: 0:00:10
+Minibatch 3: 84.38%, Time elapsed: 0:00:10
+Minibatch 4: 75.00%, Time elapsed: 0:00:10
+Minibatch 5: 75.00%, Time elapsed: 0:00:10
+Minibatch 6: 78.12%, Time elapsed: 0:00:10
+Minibatch 7: 75.00%, Time elapsed: 0:00:10
+Minibatch 8: 59.38%, Time elapsed: 0:00:10
+Minibatch 9: 71.88%, Time elapsed: 0:00:10
+Minibatch 10: 87.50%, Time elapsed: 0:00:10
+Robustness Accuracy: 77.81%, Total time elapsed: 0:01:42
