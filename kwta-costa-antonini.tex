@@ -10,8 +10,10 @@
 \usepackage{mathtools}
 \usepackage{amsfonts}
 \usepackage[labelformat=empty]{caption}
+\usepackage{grffile}
 
-\title{k-WTA Activation Function}
+\title{Reproducing results of \\
+	"Enhancing adversarial defense by k-WTA"}
 \author{Marco Costa, Andrea Luca Antonini}
 
 \begin{document}
@@ -19,20 +21,20 @@
 	\maketitle
 	
 	\section{Introduction}
-	The purpose of this project is to implement a Neural Network in which we use k-WTA as activation function. \newline
-	The use of k-WTA acivation is motivated for defending against gradient-based adversarial attacks. In fact, provided a labeled data item (\textbf{x},y), the attacker finds a perturbation \textbf{x'} imperceptibly similar to \textbf{x} but misleading enough to cause the network to output a label different from y. The most effective way to find such a perturbation, i.e. adversarial example, is by exploiting the gradient information of the network w.r.t. its input \textbf{x}. \newline
+	The goal of our project is to demonstrate the reproducibility of the paper ”Enhancing Adversarial Defense by k-Winners-Take-All” (Xiao et al.) \newline
+	The use of k-WTA activation is motivated for defending against gradient-based adversarial attacks. In fact, provided a labeled data item (\textbf{x},y), the attacker finds a perturbation \textbf{x'} imperceptibly similar to \textbf{x} but misleading enough to cause the network to output a label different from y. The most effective way to find such a perturbation, i.e. adversarial example, is by exploiting the gradient information of the network w.r.t. its input \textbf{x}. \newline
 	k-WTA activation function takes as input the entire output of a layer, retains its \textit{k} largest values and deactivates all others to zero. If we use $f(\textbf{x};\textbf{w})$ to denote a k-WTA network taking an input \textbf{x} and parameterized by weights \textbf{w}, then the gradient $\nabla_{\textbf{x}}f(\textbf{x};\textbf{w})$ at certain \textbf{x} is undefined. Therefore, $f(\textbf{x};\textbf{w})$ is C$^0$ discontinous. The discontinuities in the activation function also renders $f(\textbf{x};\textbf{w})$ discontinous w.r.t. \textbf{w}, but these discontinuities are rather sparse in the space of \textbf{w}, thus the network can be trained succesfully. \newline
-	Formally, k-WTA retains the \textit{k} largest values of a $Nx1$ input vector and sets all others to be zero before feeding the vector to the next network layer:
+	Formally, k-WTA retains the \textit{k} largest values of a $N$x$1$ input vector and sets all others to be zero before feeding the vector to the next network layer:
 	
 	\begin{equation}
 	\phi_{k}(\textbf{y})_{j} = 
 	\begin{cases*}
-	y_{j}\textrm{, if }y_{j} \in\{\textrm{\textit{k} largest element of \textbf{y}}\} \\
+	y_{j}\textrm{, if }y_{j} \in\{\textrm{\textit{k} largest elements of \textbf{y}}\} \\
 	0 \textrm{, otherwise}
 	\end{cases*}
 	\end{equation}
-	where $\phi_{k}: \mathbb{}{R}^{N} \rightarrow \mathbb{R}^{N}$ is the k-WTA function (parameterized by an integer \textit{k}), \textbf{y} $\in \mathbb{R}^{N}$ is the input to the activation, and $\phi_{k}(\textbf{y})_{j}$ denotes the j-th element of the output $\phi_{k}(\textbf{y})$.\\
-	Instead of specifying \textit{k}, we introduce a parameter $\gamma \in \{0,1\}$ called \emph{sparsity ratio}. If a layer has an ouput dimension $N$, then its k-WTA activation has  $k = \lfloor\gamma \cdot N\rfloor$. Even though the sparsity ratio can be set differently for different layers, in practice there is no gain from introducing such a variation, so we use a fixed $\gamma$.\\
+	where $\phi_{k}: \mathbb{R}^{N} \rightarrow \mathbb{R}^{N}$ is the k-WTA function (parameterized by an integer \textit{k}), \textbf{y} $\in \mathbb{R}^{N}$ is the input to the activation, and $\phi_{k}(\textbf{y})_{j}$ denotes the j-th element of the output $\phi_{k}(\textbf{y})$.\\
+	Instead of specifying \textit{k}, we introduce a parameter $\gamma \in \{0,1\}$ called \emph{sparsity ratio}. If a layer has an output dimension $N$, then its k-WTA activation has  $k = \lfloor\gamma \cdot N\rfloor$. Even though the sparsity ratio can be set differently for different layers, in practice there is no gain from introducing such a variation, so we use a fixed $\gamma$.\\
 	In a Convolutional Neural Network (CNN), the output of a layer is a C x H x W tensor: in this case we will treat the tensor as a C $\cdot$ H $\cdot$ W x 1 vector input to the k-WTA activation function.\\
 	The runtime of computing a k-WTA activation is asymptotically $O(N)$, because finding \textit{k} largest value in a list corresponds to finding the k-th largest value, which has $O(N)$ complexity.\\
 	Concerning the training of k-WTA networks, we know that when the sparsity ratio $\gamma$ is relatively small ($\le 0.2$), the network training converges slowly. In fact, a smaller $\gamma$ activates fewer neurons, effectively reducing more of the layer width and, therefore, the network size. Nevertheless, we prefer a smaller $\gamma$ because it usually leads to better robustness against finding adversarial examples.\\
@@ -52,7 +54,7 @@
 	\section{Approach}
 	The core of our approach is to substitute the most commonly used activation functions (e.g. ReLU) with k-WTA and measure their performance and robustness to adversarial attacks.
 	The idea is to compare the performance of the models with k-WTA with those who have a most common ReLU.
-	In order to do this, we used two different networks, i.e. ResNet and AlexNet, trained on different dataset, i.e. CIFAR-10 and SVHN.\\
+	In order to do this, we used two different networks, i.e. ResNet and AlexNet, trained on different datasets, i.e. CIFAR-10 and SVHN.\\
 	By examining the resulting accuracies on both the adversarial and normal testing sets, we wanted to confirm the effectiveness of the method.
 	
 	\section{Experiments}
@@ -63,7 +65,7 @@
 	\subsection{Training models}
 	We replaced the ReLU activation layer with k-WTA using a sparsity ratio $\gamma = 0.2$ and trained the models for several epochs: 80 in the case of models trained from scratch, 10 in the case of pre-trained models. Furthermore, we decreased the sparsity ratio to $\gamma = 0.1$ and trained the models again.\\
 	We noticed that, obvoiusly, training the models from scratch is much more expensive in terms of time than training pre-trained models.\\
-	Our training dataset was prepocessed with random cropping and random horizontal flipping. Finally, we additionally scaled up images to 224x224 since the Torchvision pre-trained model architectures expect this input dimensionality.\\
+	Our training dataset was preprocessed with random cropping and random horizontal flipping. Finally, we additionally scaled up images to 224x224 since the Torchvision pre-trained model architectures expect this input dimensionality.\\
 	We used a batch size of 32 in the data loaders.\\
 	All of our models used the Cross Entropy loss function and were trained with Stochastic Gradient Descent using	a learning rate of 0.01 for pre-trained models, while for the others learning rate is set to 0.1 for the first 50 epochs, while for the remaining 30 is manually changed to 0.01. \\ Moreover, we inserted a momentum of $0.9$. 
 	
@@ -73,6 +75,7 @@
 	
 	\subsection{Results}
 	In \textit{Table 1} and \textit{Table 2} we show the results for training an AlexNet network on SVHN and CIFAR-10 respectively, using ReLU, k-WTA with $\gamma = 0.2$ and k-WTA with $\gamma = 0.1$. The value $A_{std}$ indicates the standard test accuracy, while the other two columns show the robustness accuracy under PGD and Deepfool attacks. \textit{Table 3} and \textit{Table 4} illustrates the results with the networks with same characteristics, but with the difference that they are pre-trained.
+	A series of graphics representing \emph{accuracy}, \emph{loss} and \emph{error} of the various experiments can be found in \emph{Appendix A}.
 	\begin{table}[!htbp]
 		\begin{tabular}{|p{0.2\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|}
 			\hline
@@ -158,7 +161,7 @@
 		\end{tabular}
 		\caption{Table 6: ResNet18 experiment results with CIFAR-10}\label{resnetCIFAR10}
 	\end{table}\\
-	Again, we show the results for networks with the same characteristics as before, but in this case they are pre-trained.
+	Again, we show the results in \textit{Table 7} and \textit{Table 8} for networks with the same characteristics as before, but in this case they are pre-trained.
 	\begin{table}[!htbp]
 		\begin{tabular}{|p{0.2\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|}
 			\hline
@@ -178,13 +181,134 @@
 			\hline
 			Activation	& $A_{std}$	&	PGD	&	Deepfool	\\
 			\hline
-			ReLU		&$93.88\%$&$44.06\%$&$0.00\%$	\\
+			ReLU		&$93.88\%$&$29.69\%$&$0.00\%$	\\
 			\hline
-			k-WTA-0.2	&$93.06\%$&$10.00\%$&$36.88\%$	\\
+			k-WTA-0.2	&$93.06\%$&$20.62\%$&$21.56\%$	\\
 			\hline
-			k-WTA-0.1	&$87.43\%$&$6.56\%$&$41.56\%$	\\
+			k-WTA-0.1	&$87.43\%$&$9.69\%$&$21.56\%$	\\
 			\hline
 		\end{tabular}
 		\caption{Table 8: Pre-trained ResNet18 experiment results with CIFAR-10}\label{pre-resnetCIFAR10}
 	\end{table}
+
+	\section{Conclusions}
+	Analyzing the results of the various experiments, we can say that replacing the ReLU activation function with k-WTA activation function increases the robustness against white box attacks, minimally affecting the accuracy of the model.\\
+	Differently from the conclusions reported in the paper\footnote{"Enhancing Adversarial Defense by k-Winners-Take-All” (Xiao et al.)}, our results show that using k-WTA with smaller sparsity ratio (0.1) not always implies better robustness. Another fact that we can infer from our experiments is that, using pre-trained networks, we cannot find substantial changes w.r.t. networks trained from scratch on CIFAR-10 and SVHN. On the contrary, we have an improvement in terms of time, given that pre-trained networks are trained only for 10 epochs.\\
+	Analyzing the robustness w.r.t the two attacks, we can see that with Deepfool attack on ResNet networks, in general we have a marked improvement with the use of k-WTA w.r.t. ReLU. Moreover, experiments confirm that using k-WTA with lower sparsity ratio implies a better robustness against attacks.\\
+	Concerning Deepfool applied on AlexNet, using k-WTA or ReLU is practically irrelevant, since robustness is quite always equal to 0.00\%.\\
+	Talking about PGD, instead, we can observe surprisingly different and maybe unexpected results. As we can see in the tables, using k-WTA not always means improvement in robustness and, sometimes, k-WTA-0.2 gives better robustness w.r.t. k-WTA-0.1.\\
+	Another fact to highline is that, training AlexNet on SVHN dataset, only using k-WTA with sparsity ratio 0.2 we can achieve an high accuracy, while in the case of k-WTA-0.1 and ReLU accuracy results to be very low.
+	
+	\section{Appendix A}
+		\subsection{AlexNet on dataset SVHN}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_SVHN_ReLU}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_SVHN_k-WTA_0.2.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_SVHN_k-WTA_0.1.png}
+			\end{center}
+		
+		\subsection{Pre-trained AlexNet on dataset SVHN}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_SVHN_ReLU_Pretrained.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_SVHN_k-WTA_0.2_Pretrained.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_SVHN_k-WTA_0.1_Pretrained.png}
+			\end{center}
+		
+		\subsection{AlexNet on dataset CIFAR-10}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_CIFAR-10_ReLU.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_CIFAR-10_k-WTA_0.2.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_CIFAR-10_k-WTA_0.1.png}
+			\end{center}
+		
+		\subsection{Pre-trained AlexNet on dataset CIFAR-10}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_CIFAR-10_ReLU_Pretrained.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_CIFAR-10_k-WTA_0.2_Pretrained.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/AlexNet_CIFAR-10_k-WTA_0.1_Pretrained.png}
+			\end{center}
+		
+		\subsection{ResNet18 on dataset SVHN}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_SVHN_ReLU.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_SVHN_k-WTA_0.2.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_SVHN_k-WTA_0.1.png}
+			\end{center}
+		
+		\subsection{Pre-trained ResNet18 on dataset SVHN}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_SVHN_ReLU_Pretrained.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_SVHN_k-WTA_0.2_Pretrained.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_SVHN_k-WTA_0.1_Pretrained.png}
+			\end{center}
+		
+		\subsection{ResNet18 on dataset CIFAR-10}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_CIFAR-10_ReLU.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_CIFAR-10_k-WTA_0.2.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_CIFAR-10_k-WTA_0.1.png}
+			\end{center}
+		
+		\subsection{Pre-trained ResNet18 on dataset CIFAR-10}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_CIFAR-10_ReLU_Pretrained.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_CIFAR-10_k-WTA_0.2_Pretrained.png}
+			\end{center}
+			\begin{center}
+				\centering
+				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_CIFAR-10_k-WTA_0.1_Pretrained.png}
+			\end{center}
 \end{document}
