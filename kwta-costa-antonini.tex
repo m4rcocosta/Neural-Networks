@@ -5,7 +5,9 @@
 \documentclass[a4paper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[italian]{babel}
+\usepackage[english]{babel}
+\usepackage{hyperref}
+\usepackage{cite}
 \usepackage{graphicx}
 \usepackage{mathtools}
 \usepackage{amsfonts}
@@ -34,10 +36,10 @@
 	\end{cases*}
 	\end{equation}
 	where $\phi_{k}: \mathbb{R}^{N} \rightarrow \mathbb{R}^{N}$ is the k-WTA function (parameterized by an integer \textit{k}), \textbf{y} $\in \mathbb{R}^{N}$ is the input to the activation, and $\phi_{k}(\textbf{y})_{j}$ denotes the j-th element of the output $\phi_{k}(\textbf{y})$.\\
-	Instead of specifying \textit{k}, we introduce a parameter $\gamma \in \{0,1\}$ called \emph{sparsity ratio}. If a layer has an output dimension $N$, then its k-WTA activation has  $k = \lfloor\gamma \cdot N\rfloor$. Even though the sparsity ratio can be set differently for different layers, in practice there is no gain from introducing such a variation, so we use a fixed $\gamma$.\\
+	Instead of specifying \textit{k}, it's possible to introduce a parameter $\gamma \in \{0,1\}$ called \emph{sparsity ratio}. If a layer has an output dimension $N$, then its k-WTA activation has  $k = \lfloor\gamma \cdot N\rfloor$. Even though the sparsity ratio can be set differently for different layers, in practice there is no gain from introducing such a variation, so we use a fixed $\gamma$.\\
 	In a Convolutional Neural Network (CNN), the output of a layer is a C x H x W tensor: in this case we will treat the tensor as a C $\cdot$ H $\cdot$ W x 1 vector input to the k-WTA activation function.\\
 	The runtime of computing a k-WTA activation is asymptotically $O(N)$, because finding \textit{k} largest value in a list corresponds to finding the k-th largest value, which has $O(N)$ complexity.\\
-	Concerning the training of k-WTA networks, we know that when the sparsity ratio $\gamma$ is relatively small ($\le 0.2$), the network training converges slowly. In fact, a smaller $\gamma$ activates fewer neurons, effectively reducing more of the layer width and, therefore, the network size. Nevertheless, we prefer a smaller $\gamma$ because it usually leads to better robustness against finding adversarial examples.\\
+	Concerning the training of k-WTA networks, when the sparsity ratio $\gamma$ is relatively small ($\le 0.2$), the network training converges slowly. In fact, a smaller $\gamma$ activates fewer neurons, effectively reducing more of the layer width and, therefore, the network size. Nevertheless, it is preferable to use a smaller $\gamma$ because it usually leads to better robustness against finding adversarial examples.\\
 	Theoretically speaking, consider one layer outputting values \textbf{x}, passed through  a k-WTA activation, and followed by the next layer whose linear weight matrix is
 	W. We define the k-WTA \emph{activation pattern} under the input \textbf{x} as:
 	\begin{center}
@@ -45,7 +47,7 @@
 	\end{center}
 	where we use $[l]$ to indicate integer set $\{1,...,l\}$.\\
 	Even an infinitesimal perturbation of \textbf{x} can change $\mathcal{A}(\textbf{x})$: some element $i$ is removed from $\mathcal{A}(\textbf{x})$, while another element $j$ is added in. Corresponding to this change, in the evaluation of $W\phi_{k}(\textbf{x})$, the contribution of $W$'s column vector $W_{i}$ is useless, while another column vector $W_{j}$ suddenly takes effect. It's this change that makes the result of $W\phi_{k}(\textbf{x})$ $C^0$ discontinous.\\
-	Once $W$ is determined, the discontinuity jump depends on the value of $x_i$ and $x_j$, that are respectively the input value that does no more affect the result and the new value that actually has effect. We note from previous experiments that the smaller $\gamma$ is, the larger the discontinuity jump will be: for this reason, we prefer a smaller $\gamma$, that will make the search of adversarial examples harder.\\
+	Once $W$ is determined, the discontinuity jump depends on the value of $x_i$ and $x_j$, that are respectively the input value that does no more affect the result and the new value that actually has effect. The smaller $\gamma$ is, the larger the discontinuity jump will be: for this reason, it is recommended to use a smaller $\gamma$, that will make the search of adversarial examples harder.\\
 	If the activation patterns of all layers are fixed, then f(\textbf{x}) is a linear function, but when the activation pattern changes, f(\textbf{x}) switches from one linear function to another linear function. Over the entire space of \textbf{x}, f(\textbf{x}) is \emph{piecewise linear}. The specific activation patterns of all layers define a specific linear piece of the function, i.e. a \emph{linear region}: in k-WTA, these linear regions are disconnected.\\
 	If the linear regions are densely distributed, a small perturbation $\Delta\textbf{x}$ from any data point will likely cross the boundary of the linear region where \textbf{x} is. Whenever boundary crossing occurs, the gradient becomes undefined.\\
 	The rationale behind k-WTA activation is to destroy network gradients, that are information needed in \emph{white box attacks}.\\
@@ -54,24 +56,26 @@
 	\section{Approach}
 	The core of our approach is to substitute the most commonly used activation functions (e.g. ReLU) with k-WTA and measure their performance and robustness to adversarial attacks.
 	The idea is to compare the performance of the models with k-WTA with those who have a most common ReLU.
-	In order to do this, we used two different networks, i.e. ResNet and AlexNet, trained on different datasets, i.e. CIFAR-10 and SVHN.\\
-	By examining the resulting accuracies on both the adversarial and normal testing sets, we wanted to confirm the effectiveness of the method.
+	In order to do this, we used two different networks, i.e. \textbf{\textit{ResNet}} and \textbf{\textit{AlexNet}}, trained on different datasets, i.e. \textbf{\textit{CIFAR-10}} and \textbf{\textit{SVHN}}.\\
+	By examining the resulting robustness of the trained models, we wanted to confirm the effectiveness of the method.
 	
 	\section{Experiments}
 	\subsection{Frameworks and Data}
 	All the experiments have been done with Pytorch deep learning framework, using GPU acceleration for the execution of the experiments.\\
-	As said before, we considered ResNet and AlexNet models using the standard pre-trained implementations of ResNet18 and AlexNet architecture from the Torchvision package. We used these networks in two ways. First, since these networks are pre-trained on ImageNet dataset, we modified the final layer to output 10 features and fine-tuned the models on CIFAR-10 and SVHN dataset. Second, we trained the networks from scratch, directly on CIFAR-10 and SVHN datasets.
+	As said before, we considered ResNet and AlexNet models using the standard implementations of ResNet18 and AlexNet architecture from the Torchvision package. We used these networks in two ways. First, using the pre-trained models on ImageNet dataset, modifiying the final layer to output 10 features and fine-tuned the models on CIFAR-10 and SVHN dataset. Second, training the networks from scratch, directly on CIFAR-10 and SVHN datasets.
 	
 	\subsection{Training models}
-	We replaced the ReLU activation layer with k-WTA using a sparsity ratio $\gamma = 0.2$ and trained the models for several epochs: 80 in the case of models trained from scratch, 10 in the case of pre-trained models. Furthermore, we decreased the sparsity ratio to $\gamma = 0.1$ and trained the models again.\\
+	In order to train the models we proceeded as follows: \\
+	For networks that use the \textit{ReLU} activation function, we have simply traied them with 80 epochs for models trained from scratch and 10 epochs for pre-trained models. For networks that use the \textit{k-WTA} activation function, instead, we replaced the \textit{ReLU} activation layer with \textit{k-WTA} using two sparsity ratio, first $\gamma = 0.2$ and then $\gamma = 0.1$, using the same training scheme seen before (80 epochs for models trained from scratch, 10 for pre-trained models). \\
+	The authors of the paper, instead, used a different approach. For k-WTA networks with a sparsity ratio $\gamma = 0.1$, they trained them incrementally, starting with $\gamma = 0.2$ for 50 epochs with SGD and then decreasing $\gamma$ by $0.005$ every 2 epochs until it reached $0.1$. \\
 	We noticed that, obvoiusly, training the models from scratch is much more expensive in terms of time than training pre-trained models.\\
 	Our training dataset was preprocessed with random cropping and random horizontal flipping. Finally, we additionally scaled up images to 224x224 since the Torchvision pre-trained model architectures expect this input dimensionality.\\
-	We used a batch size of 32 in the data loaders.\\
-	All of our models used the Cross Entropy loss function and were trained with Stochastic Gradient Descent using	a learning rate of 0.01 for pre-trained models, while for the others learning rate is set to 0.1 for the first 50 epochs, while for the remaining 30 is manually changed to 0.01. \\ Moreover, we inserted a momentum of $0.9$. 
+	We used a batch size of 64 in the data loaders.\\
+	All of our models used the Cross Entropy loss function and were trained with Stochastic Gradient Descent using	a learning rate of $0.01$ for pre-trained models, while for the others learning rate is set to $0.1$ for the first 50 epochs, while for the remaining 30 is manually changed to 0.01. \\ Moreover, we inserted a momentum of $0.9$, and in order to avoid exploding gradients we also used gradient clipping with a max norm of $0.5$
 	
 	\subsection{Robustness to Adversarial attacks}
-	k-WTA activation function, as explained in the introduction, is wanted to be a defence against attacks that exploit the gradient of the network. In order to neutralize these attacks, k-WTA, thanks to its densely piecewise continous nature, destroys network gradients and, therefore, represents a counterpoison to the venom of attacks, specially white box attacks. Our goal is to test the effective robustness to adversarial attacks of the models using k-WTA activation function, comparing the results with models using ReLU activation function. To achieve this, we tested the various models ((Resnet | AlexNet) + (k-WTA | ReLU)) under two kind of attacks, namely Projected Gradient Descent (PGD) and Deepfool. Both the attacks are run using the Foolbox third-party toolkit.\\
-	They use a perturbation $\epsilon = 0.031$ in the case of CIFAR-10 dataset, while in the case of SVHN dataset $\epsilon = 0.047$. PGD attack is carried on for 40 steps, with random starting and relative step size of $0.003$. Instead, Deepfool attack is run for 20 steps with a candidate sub-sampling parameter of 10. Due to computational constraints, each of these attacks was run only on the first 10 mini-batches, each of size 32, of images from the test set.
+	k-WTA activation function, as explained in the introduction, is wanted to be a defence against attacks that exploit the gradient of the network. In order to neutralize these attacks, k-WTA, thanks to its densely piecewise continous nature, destroys network gradients and, therefore, represents a counterpoison to the venom of attacks, specially white box attacks. Our goal is to test the effective robustness to adversarial attacks of the models using k-WTA activation function, comparing the results with models using ReLU activation function. To achieve this, we tested the various models ((Resnet | AlexNet) + (k-WTA | ReLU)) under two kind of attacks, namely Projected Gradient Descent (\textbf{\textit{PGD}}) and \textbf{\textit{Deepfool}}. Both the attacks are run using the Foolbox third-party toolkit.\\
+	We used a perturbation $\epsilon = 0.031$ in the case of CIFAR-10 dataset, while in the case of SVHN dataset $\epsilon = 0.047$. PGD attack is carried on for 40 steps, with random starting and relative step size of $0.003$. Instead, Deepfool attack is run for 20 steps with a candidate sub-sampling parameter of 10. The attacks were executed for 20 mini-batches with batch size 64.
 	
 	\subsection{Results}
 	In \textit{Table 1} and \textit{Table 2} we show the results for training an AlexNet network on SVHN and CIFAR-10 respectively, using ReLU, k-WTA with $\gamma = 0.2$ and k-WTA with $\gamma = 0.1$. The value $A_{std}$ indicates the standard test accuracy, while the other two columns show the robustness accuracy under PGD and Deepfool attacks. \textit{Table 3} and \textit{Table 4} illustrates the results with the networks with same characteristics, but with the difference that they are pre-trained.
@@ -132,7 +136,7 @@
 		\end{tabular}
 		\caption{Table 4: Pre-trained AlexNet experiment results with CIFAR-10}\label{pre-alexnetCIFAR10}
 	\end{table}\\
-	Then, we show the experiment results for training normally and under adversarial attack using network ResNet18, with SVHN dataset (\textit{Table 5}) and CIFAR-10 dataset (\textit{Table 6}) on ReLU, k-WTA-0.2 and k-WTA-0.1.
+	Then, we show the experiment results for training using network ResNet18, with SVHN dataset (\textit{Table 5}) and CIFAR-10 dataset (\textit{Table 6}) on ReLU, k-WTA-0.2 and k-WTA-0.1.
 	\begin{table}[!htbp]
 		\begin{tabular}{|p{0.2\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|}
 			\hline
@@ -193,7 +197,7 @@
 
 	\section{Conclusions}
 	Analyzing the results of the various experiments, we can say that replacing the ReLU activation function with k-WTA activation function increases the robustness against white box attacks, minimally affecting the accuracy of the model.\\
-	Differently from the conclusions reported in the paper\footnote{"Enhancing Adversarial Defense by k-Winners-Take-All” (Xiao et al.)}, our results show that using k-WTA with smaller sparsity ratio (0.1) not always implies better robustness. Another fact that we can infer from our experiments is that, using pre-trained networks, we cannot find substantial changes w.r.t. networks trained from scratch on CIFAR-10 and SVHN. On the contrary, we have an improvement in terms of time, given that pre-trained networks are trained only for 10 epochs.\\
+	Differently from the conclusions reported in the paper \cite{xiao2019resisting}, our results show that using k-WTA with smaller sparsity ratio (0.1) not always implies better robustness. Another fact that we can infer from our experiments is that, using pre-trained networks, we cannot find substantial changes w.r.t. networks trained from scratch on CIFAR-10 and SVHN. On the contrary, we have an improvement in terms of time, given that pre-trained networks are trained only for 10 epochs.\\
 	Analyzing the robustness w.r.t the two attacks, we can see that with Deepfool attack on ResNet networks, in general we have a marked improvement with the use of k-WTA w.r.t. ReLU. Moreover, experiments confirm that using k-WTA with lower sparsity ratio implies a better robustness against attacks.\\
 	Concerning Deepfool applied on AlexNet, using k-WTA or ReLU is practically irrelevant, since robustness is quite always equal to 0.00\%.\\
 	Talking about PGD, instead, we can observe surprisingly different and maybe unexpected results. As we can see in the tables, using k-WTA not always means improvement in robustness and, sometimes, k-WTA-0.2 gives better robustness w.r.t. k-WTA-0.1.\\
@@ -311,4 +315,7 @@
 				\centering
 				\includegraphics[width=400px,keepaspectratio]{Results/ResNet18_CIFAR-10_k-WTA_0.1_Pretrained.png}
 			\end{center}
+		
+		\bibliography{bibliography} 
+		\bibliographystyle{ieeetr}
 \end{document}
