@@ -1,6 +1,9 @@
 # Neural Networks
-<a href="https://www.dis.uniroma1.it/"><img src="http://www.dis.uniroma1.it/sites/default/files/marchio%20logo%20eng%20jpg.jpg" width="1000"></a>
+<a href="https://www.dis.uniroma1.it/"><img src="https://www.dis.uniroma1.it/sites/default/files/marchio%20logo%20eng%20jpg.jpg" width="1000"></a>
+
 Reproduction of the paper [Enhancing Adversarial Defense by k-Winners-Take-All](https://arxiv.org/abs/1905.10510)
+
+[Report](Report/report.pdf)
 
 ## Team
 * Andrea Antonini <a href="https://github.com/AndreaAntonini"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Octicons-mark-github.svg/1024px-Octicons-mark-github.svg.png" width="20"></a>
