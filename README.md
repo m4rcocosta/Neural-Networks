@@ -1,5 +1,6 @@
 # Neural Networks
 <a href="https://www.dis.uniroma1.it/"><img src="http://www.dis.uniroma1.it/sites/default/files/marchio%20logo%20eng%20jpg.jpg" width="1000"></a>
+
 Reproduction of the paper [Enhancing Adversarial Defense by k-Winners-Take-All](https://arxiv.org/abs/1905.10510)
 
 [Report](Report/report.pdf)
