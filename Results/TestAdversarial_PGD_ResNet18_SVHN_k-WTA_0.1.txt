@@ -1,11 +1,21 @@
-Minibatch 1: 90.62%, Time elapsed: 0:00:10
-Minibatch 2: 81.25%, Time elapsed: 0:00:10
-Minibatch 3: 84.38%, Time elapsed: 0:00:10
-Minibatch 4: 75.00%, Time elapsed: 0:00:10
-Minibatch 5: 75.00%, Time elapsed: 0:00:10
-Minibatch 6: 78.12%, Time elapsed: 0:00:10
-Minibatch 7: 75.00%, Time elapsed: 0:00:10
-Minibatch 8: 59.38%, Time elapsed: 0:00:10
-Minibatch 9: 71.88%, Time elapsed: 0:00:10
-Minibatch 10: 87.50%, Time elapsed: 0:00:10
-Robustness Accuracy: 77.81%, Total time elapsed: 0:01:42
+Minibatch 1: 78.12%, Time elapsed: 0:00:11
+Minibatch 2: 67.19%, Time elapsed: 0:00:11
+Minibatch 3: 67.19%, Time elapsed: 0:00:11
+Minibatch 4: 70.31%, Time elapsed: 0:00:11
+Minibatch 5: 60.94%, Time elapsed: 0:00:11
+Minibatch 6: 67.19%, Time elapsed: 0:00:11
+Minibatch 7: 68.75%, Time elapsed: 0:00:11
+Minibatch 8: 73.44%, Time elapsed: 0:00:11
+Minibatch 9: 73.44%, Time elapsed: 0:00:11
+Minibatch 10: 70.31%, Time elapsed: 0:00:11
+Minibatch 11: 76.56%, Time elapsed: 0:00:11
+Minibatch 12: 68.75%, Time elapsed: 0:00:11
+Minibatch 13: 70.31%, Time elapsed: 0:00:11
+Minibatch 14: 71.88%, Time elapsed: 0:00:11
+Minibatch 15: 70.31%, Time elapsed: 0:00:11
+Minibatch 16: 67.19%, Time elapsed: 0:00:11
+Minibatch 17: 65.62%, Time elapsed: 0:00:11
+Minibatch 18: 59.38%, Time elapsed: 0:00:11
+Minibatch 19: 68.75%, Time elapsed: 0:00:11
+Minibatch 20: 73.44%, Time elapsed: 0:00:11
+Robustness Accuracy: 69.45%, Total time elapsed: 0:03:38
