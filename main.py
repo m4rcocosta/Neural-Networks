@@ -234,7 +234,7 @@ def train(modelName, datasetName, activationFunction, epochs, batchSize, kWTAsr,
             plotTitle += " Pretrained"
         plotTitle += ", Dataset: " + datasetName + ", Activation Function: " + activationFunction
         if activationFunction == "k-WTA":
-            plotTitle += " with Sparcity Ratio " + str(kWTAsr)
+            plotTitle += " with Sparsity Ratio " + str(kWTAsr)
         fig.suptitle(plotTitle)
         ax1.set_title("Accuracy")
         ax2.set_title("Loss")
